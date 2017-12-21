@@ -1,4 +1,36 @@
-;;; -*- lexical-binding: t; nameless-current-name: "cpror"; eval: (nameless-mode t); -*-
+;;; citeproc-orgref.el --- Render org-ref references in CSL styles -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2017 András Simonyi
+
+;; Author: András Simonyi <andras.simonyi@gmail.com>
+;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
+;; URL: https://github.com/andras-simonyi/citeproc-el
+;; Keywords: bib
+;; Package-Requires: ((emacs "25") (citeproc "0.1"))
+;; Version: 0.1
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;; This file is not part of GNU Emacs.
+
+;;; Commentary:
+
+;; Functions to render org-ref bibliographic reference links in Citation Style
+;; Language (CSL) styles using the citeproc-el library. See the accompanying
+;; README for full documentation.
+
+;;; Code:
 
 (require 'subr-x)
 (require 'map)
@@ -10,7 +42,8 @@
 (require 'citeproc)
 (require 'cpr-itemgetters)
 
-(defvar cpror-default-csl-style-file "/home/simka/projects/citeproc/styles/chicago-author-date.csl"
+(defvar cpror-default-csl-style-file
+  "/home/simka/projects/citeproc/styles/chicago-author-date.csl"
   "Default CSL style file.")
 
 (defvar cpror-cite-link-types '("cite" "citealt" "citeyear")
