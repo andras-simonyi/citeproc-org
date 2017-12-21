@@ -42,74 +42,74 @@
 (require 'citeproc)
 (require 'cpr-itemgetters)
 
-(defvar cpror-default-csl-style-file
+(defvar citeproc-orgref-default-style-file
   "/home/simka/projects/citeproc/styles/chicago-author-date.csl"
   "Default CSL style file.")
 
-(defvar cpror-cite-link-types '("cite" "citealt" "citeyear")
+(defvar citeproc-orgref-link-types '("cite" "citealt" "citeyear")
   "List of supported cite link types.")
 
-(defvar cpror-suppress-affixes-cite-link-types '("citealt")
+(defvar citeproc-orgref-suppress-affixes-link-types '("citealt")
   "List of cite link types for which citation affixes should be
   suppressed.")
 
-(defvar cpror-suppress-first-author-cite-link-types '("citeyear")
+(defvar citeproc-orgref-suppress-first-author-link-types '("citeyear")
   "List of cite link types for which the first author should be 
   suppressed.")
 
-(defvar cpror-html-backends '(html twbs)
+(defvar citeproc-orgref-html-backends '(html twbs)
   "List of html-based org-mode export backends.")
 
-(defvar cpror-latex-backends '(latex)
+(defvar citeproc-orgref-latex-backends '(latex)
   "List of latex-based org-mode export backends.")
 
-(defvar cpror-no-cite-links-backends '(ascii)
+(defvar citeproc-orgref-no-citelinks-backends '(ascii)
   "Backends for which cite linking should always be turned off.")
 
-(defvar cpror-non-citeproc-backends '(beamer)
+(defvar citeproc-orgref-ignore-backends '(beamer)
   "List of backends that shouldn't be processed by citeproc.")
 
-(defvar cpror-locales-dir "/home/simka/projects/locales"
+(defvar citeproc-orgref-locales-dir "/home/simka/projects/locales"
   "Directory containing csl locale files.")
 
-(defvar cpror-html-bib-header "<h2 class='cpror-bib-h2'>Bibliography</h1>\n"
+(defvar citeproc-orgref-html-bib-header "<h2 class='citeproc-orgref-bib-h2'>Bibliography</h1>\n"
   "HTML bibliography header to use for html export.")
 
-(defvar cpror-latex-bib-header "\\section*{Bibliography}\n\n"
+(defvar citeproc-orgref-latex-bib-header "\\section*{Bibliography}\n\n"
   "HTML bibliography header to use for html export.")
 
-(defvar cpror-org-bib-header "* Bibliography\n"
+(defvar citeproc-orgref-org-bib-header "* Bibliography\n"
   "Org-mode bibliography header to use for export.")
 
-(defvar cpror-suppress-bibliography nil
+(defvar citeproc-orgref-suppress-bib nil
   "Don't insert bibliography during export.")
 
-(defvar cpror-bibtex-export-use-affixes nil
+(defvar citeproc-orgref-bibtex-export-use-affixes nil
   "Use separate prefix and suffix for bibtex export.")
 
-(defvar cpror-link-cites t
+(defvar citeproc-orgref-link-cites t
   "Link cites to references.")
 
-(defvar cpror-html-hanging-indent "1.5em"
+(defvar citeproc-orgref-html-hanging-indent "1.5em"
   "The size of hanging-indent for html ouput in valid CSS units.
 Used only when hanging-indent is activated by the used CSL
 style.")
 
-(defvar cpror-html-label-width-per-char "0.6em"
+(defvar citeproc-orgref-html-label-width-per-char "0.6em"
   "Character width in CSS units for calculating entry label widths.
 Used only when second-field-align is activated by the used CSL
 style.")
 
-(defvar cpror-latex-hanging-indent "1.5em"
+(defvar citeproc-orgref-latex-hanging-indent "1.5em"
   "The size of hanging-indent for LaTeX ouput in valid LaTeX units.
 Always used for LaTeX output.")
 
-(defvar-local cpror-proc-cache nil
+(defvar-local citeproc-orgref--proc-cache nil
   "Cached citeproc processor for citeproc-orgref.
 Its value is either nil or a list of the form
 (PROC STYLE-FILE BIBTEX-FILE LOCALE).")
 
-(defconst cpror-label-alist
+(defconst citeproc-orgref--label-alist
   '(("bk." . "book")
     ("bks." . "book")
     ("book" . "book")
@@ -164,19 +164,19 @@ Its value is either nil or a list of the form
     ("vols." .  "volume"))
   "Alist mapping locator names to locators.")
 
-(defconst cpror-label-regex
-  (let ((labels (map-keys cpror-label-alist)))
+(defconst citeproc-orgref-label-regex
+  (let ((labels (map-keys citeproc-orgref--label-alist)))
     (concat "\\<\\("
 	    (mapconcat (lambda (x) (s-replace "." "\\." x))
 		       labels "\\|")
 	    "\\)[ $]")))
 
-(defun cpror-parse-locator-affix (s)
+(defun citeproc-orgref--parse-locator-affix (s)
   "Parse string S as a cite's locator and affix description.
 Return an alist with `locator', `label', `prefix' and `suffix'
 keys."
   (if (s-blank-p s) nil
-    (let ((label-matches (s-matched-positions-all cpror-label-regex s 1))
+    (let ((label-matches (s-matched-positions-all citeproc-orgref-label-regex s 1))
 	  (digit-matches (s-matched-positions-all "\\<\\w*[[:digit:]]+" s))
 	  (comma-matches (s-matched-positions-all "," s))
 	  label locator prefix suffix location)
@@ -190,7 +190,7 @@ keys."
 			label "page")
 		(progn
 		  (setq label-exp (substring s (caar label-matches) (cdar label-matches))
-			label (assoc-default label-exp cpror-label-alist))
+			label (assoc-default label-exp citeproc-orgref--label-alist))
 		  (if (null digit-matches)
 		      (setq loc-start (caar label-matches)
 			    loc-end (cdr (-last-item label-matches)))
@@ -212,7 +212,7 @@ keys."
       `((locator . ,locator) (label . ,label) (location . ,location)
 	(prefix . ,prefix) (suffix . ,suffix)))))
 
-(defun cpror-in-fn-p (elt)
+(defun citeproc-orgref--in-fn-p (elt)
   "Whether org element ELT is in a footnote."
   (let ((curr (org-element-property :parent elt))
 	result)
@@ -223,7 +223,7 @@ keys."
       (setq curr (org-element-property :parent curr)))
     result)) 
 
-(defun cpror-get-option-val (opt)
+(defun citeproc-orgref--get-option-val (opt)
   "Return the value of org-mode option OPT."
   (goto-char (point-min))
   (if (re-search-forward
@@ -235,32 +235,32 @@ keys."
 	(s-trim (buffer-substring-no-properties start end)))
     nil))
 
-(defun cpror-get-proc (bibtex-file)
+(defun citeproc-orgref--get-proc (bibtex-file)
   "Return a cpr processor to use and update the cache if needed."
-  (let ((style-file (or (cpror-get-option-val "csl-style") cpror-default-csl-style-file))
-	(locale (or (cpror-get-option-val "language") "en"))
+  (let ((style-file (or (citeproc-orgref--get-option-val "csl-style") citeproc-orgref-default-style-file))
+	(locale (or (citeproc-orgref--get-option-val "language") "en"))
 	result)
     (-when-let ((c-proc c-style-file c-bibtex-file c-locale)
-		cpror-proc-cache)
+		citeproc-orgref--proc-cache)
       (when (and (string= style-file c-style-file)
 		 (string= locale c-locale))
 	(progn
 	  (unless (string= bibtex-file c-bibtex-file)
 	    (setf (cpr-proc-getter c-proc)
 		  (cpr-itgetter-from-bibtex bibtex-file)
-		  (elt 1 cpror-proc-cache) bibtex-file)
+		  (elt 1 citeproc-orgref--proc-cache) bibtex-file)
 	    (setq result c-proc)))))
     (or result
 	(let ((proc (cpr-proc-create
 		     style-file
 		     (cpr-itgetter-from-bibtex bibtex-file)
-		     (cpr-locale-getter-from-dir cpror-locales-dir)
+		     (cpr-locale-getter-from-dir citeproc-orgref-locales-dir)
 		     locale)))
-	  (setq cpror-proc-cache
+	  (setq citeproc-orgref--proc-cache
 		(list proc style-file bibtex-file locale))
 	  proc))))
 
-(defun cpror-links-and-notes()
+(defun citeproc-orgref--links-and-notes()
   "Collect bib-related links and info about them."
   (let* ((elts (org-element-map (org-element-parse-buffer)
 		   '(footnote-reference link) #'identity))
@@ -277,10 +277,10 @@ keys."
 		 links-and-notes))
 	(let ((link-type (org-element-property :type elt)))
 	  (cond
-	   ((member link-type cpror-cite-link-types)
+	   ((member link-type citeproc-orgref-link-types)
 	    (push elt cite-links)
 	    (cl-incf cite-links-count)
-	    (let ((fn-label (cpror-in-fn-p elt))
+	    (let ((fn-label (citeproc-orgref--in-fn-p elt))
 		  ;; links as ('link <link-idx>)
 		  (indexed (list 'link act-link-no elt)))
 	      (cl-incf act-link-no)
@@ -302,8 +302,8 @@ keys."
 	    (push elt bib-links))))))
     (list (nreverse cite-links) bib-links links-and-notes cite-links-count footnotes-count)))
 
-(defun cpror-assemble-link-info (links-and-notes link-count footnote-count
-					    &optional all-links-are-notes)
+(defun citeproc-orgref--assemble-link-info (links-and-notes link-count footnote-count
+							    &optional all-links-are-notes)
   "Return position and note info using LINKS-AND-NOTES."
   (let (link-info
 	(act-fn-no (let ((links-and-notes-count (length links-and-notes)))
@@ -334,7 +334,8 @@ keys."
 		 link-info)))))
     link-info))
 
-(defun cpror-link-to-citation (link footnote-no new-fn &optional capitalize-outside-fn)
+(defun citeproc--orgref-link-to-citation (link footnote-no new-fn
+					      &optional capitalize-outside-fn)
   "Return a citeproc citation corresponding to org cite LINK.
 If CAPITALIZE-OUTSIDE-FN is  non-nil then set the
 `capitalize-first' slot of the citation struct to t when the link
@@ -354,7 +355,7 @@ is not in a footnote."
      :cites
      (let ((cites
 	    (if content
-		(let* ((cites-rest (mapcar #'cpror-parse-locator-affix
+		(let* ((cites-rest (mapcar #'citeproc-orgref--parse-locator-affix
 					   (split-string content ";")))
 		       (cites-no (length cites-ids))
 		       (rest-no (length cites-rest))
@@ -365,15 +366,15 @@ is not in a footnote."
 					      cites-rest))))
 		  (-zip cites-ids cites-rest-filled))
 	      (mapcar #'list cites-ids))))
-       (if (member type cpror-suppress-first-author-cite-link-types)
+       (if (member type citeproc-orgref-suppress-first-author-link-types)
 	   (cons (cons '(suppress-author . t) (car cites)) (cdr cites))
 	 cites))
      :capitalize-first (and capitalize-outside-fn
 			    new-fn)
      :suppress-affixes (member type
-			       cpror-suppress-affixes-cite-link-types))))
+			       citeproc-orgref-suppress-affixes-link-types))))
  
-(defun cpror-element-boundaries (element)
+(defun citeproc-orgref-element-boundaries (element)
   "Return the boundaries of an org ELEMENT.
 Returns a (BEGIN END) list -- post-blank positions are not
 considered when calculating END."
@@ -382,10 +383,10 @@ considered when calculating END."
 	(post-blank (org-element-property :post-blank element)))
     (list begin (- end post-blank))))
 
-(defun cpror-format-html-bib (bib parameters)
+(defun citeproc-orgref-format-html-bib (bib parameters)
   "Format html bibliography BIB using formatting PARAMATERS."
-  (let* ((char-width (car (s-match "[[:digit:].]+" cpror-html-label-width-per-char)))
-	 (char-width-unit (substring cpror-html-label-width-per-char (length char-width))))
+  (let* ((char-width (car (s-match "[[:digit:].]+" citeproc-orgref-html-label-width-per-char)))
+	 (char-width-unit (substring citeproc-orgref-html-label-width-per-char (length char-width))))
     (let-alist parameters 
       (concat "\n#+BEGIN_EXPORT html\n"
 	      (when .second-field-align
@@ -395,73 +396,73 @@ considered when calculating END."
 			char-width-unit ";}</style>"))
 	      (when .hanging-indent
 		(concat "<style>.csl-entry{text-indent: -"
-			cpror-html-hanging-indent
+			citeproc-orgref-html-hanging-indent
 			"; margin-left: "
-			cpror-html-hanging-indent
+			citeproc-orgref-html-hanging-indent
 			";}</style>"))
-	      cpror-html-bib-header
+	      citeproc-orgref-html-bib-header
 	      bib
 	      "\n#+END_EXPORT\n"))))
 
-(defun cpror-format-latex-bib (bib)
+(defun citeproc-orgref--format-latex-bib (bib)
   "Format LaTeX bibliography BIB."
   (concat "#+latex_header: \\usepackage{hanging}\n#+BEGIN_EXPORT latex\n"
-		 cpror-latex-bib-header
-		 "\\begin{hangparas}{" cpror-latex-hanging-indent "}{1}"
+		 citeproc-orgref-latex-bib-header
+		 "\\begin{hangparas}{" citeproc-orgref-latex-hanging-indent "}{1}"
 		 bib "\n\\end{hangparas}\n#+END_EXPORT\n"))
 
-(defun cpror-bibliography (proc backend)
+(defun citeproc-orgref--bibliography (proc backend)
   "Return a bibliography using citeproc PROC."
-  (cond ((memq backend cpror-html-backends)
-	 (-let ((rendered (cpr-render-bib proc 'html (not cpror-link-cites))))
-	   (cpror-format-html-bib (car rendered) (cdr rendered))))
-	((memq backend cpror-latex-backends)
-	 (cpror-format-latex-bib (car (cpr-render-bib proc 'latex (not cpror-link-cites)))))
-	(t (concat cpror-org-bib-header
-		   (car (cpr-render-bib proc 'org (or (memq backend cpror-no-cite-links-backends)
-						      (not cpror-link-cites))))
+  (cond ((memq backend citeproc-orgref-html-backends)
+	 (-let ((rendered (cpr-render-bib proc 'html (not citeproc-orgref-link-cites))))
+	   (citeproc-orgref-format-html-bib (car rendered) (cdr rendered))))
+	((memq backend citeproc-orgref-latex-backends)
+	 (citeproc-orgref--format-latex-bib (car (cpr-render-bib proc 'latex (not citeproc-orgref-link-cites)))))
+	(t (concat citeproc-orgref-org-bib-header
+		   (car (cpr-render-bib proc 'org (or (memq backend citeproc-orgref-no-citelinks-backends)
+						      (not citeproc-orgref-link-cites))))
 		   "\n"))))
 
-(defun cpror-append-and-render-citations (link-info proc backend)
+(defun citeproc-orgref--append-and-render-citations (link-info proc backend)
   "Render citations using LINK-INFO and PROC.
 Return the list of corresponding rendered citations."
   (let* ((is-note-style (cpr-style-cite-note (cpr-proc-style proc)))
-	 (citations (--map (cpror-link-to-citation (plist-get it :link)
+	 (citations (--map (citeproc--orgref-link-to-citation (plist-get it :link)
 					      (plist-get it :fn-no)
 					      (plist-get it :new-fn)
 					      is-note-style)
 			   link-info)))
     (cpr-proc-append-citations proc citations)
     (let* ((rendered
-	    (cond ((memq backend cpror-html-backends)
+	    (cond ((memq backend citeproc-orgref-html-backends)
 		   (--map (concat "@@html:" it "@@")
 			  (cpr-render-citations
-			   proc 'html (not cpror-link-cites))))
-		  ((memq backend cpror-latex-backends)
+			   proc 'html (not citeproc-orgref-link-cites))))
+		  ((memq backend citeproc-orgref-latex-backends)
 		   (--map (concat "@@latex:" it "@@")
 			  (cpr-render-citations
-			   proc 'latex (not cpror-link-cites))))
+			   proc 'latex (not citeproc-orgref-link-cites))))
 		  (t (cpr-render-citations
-		      proc 'org (or (memq backend cpror-no-cite-links-backends)
-				    (not cpror-link-cites)))))))
+		      proc 'org (or (memq backend citeproc-orgref-no-citelinks-backends)
+				    (not citeproc-orgref-link-cites)))))))
       (setq rendered (cl-loop for l-i in link-info
 			      for rendered-citation in rendered
 			      collect (if (plist-get l-i :new-fn)
 					  (concat "[fn::" rendered-citation "]")
 					rendered-citation)))
-      (cpror-reorder-rendered-citations rendered link-info))))
+      (citeproc-orgref--reorder-rendered-citations rendered link-info))))
 
-(defun cpror-reorder-rendered-citations (rendered link-info)
+(defun citeproc-orgref--reorder-rendered-citations (rendered link-info)
   (let ((sorted (cl-sort link-info #'< :key (lambda (x) (plist-get x :link-no)))))
     (--map (elt rendered (plist-get it :cite-no)) sorted)))
 
-(defun cpror-replace-links (&optional backend)
+(defun citeproc-orgref-render-references (backend)
   "Replace cite and bib links with references.
 BACKEND is the org export backend used. Returns nil."
   (interactive)
-  (if (not (memq backend cpror-non-citeproc-backends))
+  (if (not (memq backend citeproc-orgref-ignore-backends))
       (-let (((cite-links bib-links links-and-notes link-count footnote-count)
-	      (cpror-links-and-notes)))
+	      (citeproc-orgref--links-and-notes)))
 	(when cite-links
 	  ;; Deal with the existence and boundaries of the bib link
 	  (-let* ((bl-count (length bib-links))
@@ -472,22 +473,22 @@ BACKEND is the org export backend used. Returns nil."
 			     ((= bl-count 0)
 			      (error "Missing bibliography link"))))
 		  (bibtex-file (org-element-property :path bib-link))
-		  (proc (cpror-get-proc bibtex-file))
+		  (proc (citeproc-orgref--get-proc bibtex-file))
 		  ((bl-begin bl-end)
-		   (and bib-link (cpror-element-boundaries bib-link))))
+		   (and bib-link (citeproc-orgref-element-boundaries bib-link))))
 	    (cpr-proc-clear proc)
 	    (-let* ((link-info
-		     (cpror-assemble-link-info links-and-notes link-count footnote-count
+		     (citeproc-orgref--assemble-link-info links-and-notes link-count footnote-count
 					  (cpr-style-cite-note (cpr-proc-style proc))))
-		    (rendered-cites (cpror-append-and-render-citations link-info proc backend))
-		    (rendered-bib (if cpror-suppress-bibliography ""
-				    (cpror-bibliography proc backend)))
+		    (rendered-cites (citeproc-orgref--append-and-render-citations link-info proc backend))
+		    (rendered-bib (if citeproc-orgref-suppress-bib ""
+				    (citeproc-orgref--bibliography proc backend)))
 		    (offset 0)
 		    (bib-inserted-p nil))
 	      (cl-loop for rendered in rendered-cites
 		       for link in cite-links
 		       do
-		       (-let* (((begin end) (cpror-element-boundaries link)))
+		       (-let* (((begin end) (citeproc-orgref-element-boundaries link)))
 			 (when (and bib-link (> begin bl-end))
 			   ;; Reached a cite link after the bibliography link so
 			   ;; we insert the rendered bibliography before it
@@ -506,23 +507,23 @@ BACKEND is the org export backend used. Returns nil."
 		;; The bibliography link was the last one
 		(setf (buffer-substring (+ bl-begin offset) (+ bl-end offset))
 		      rendered-bib))))))
-    (cpror-citelinks-to-legacy))
+    (citeproc-orgref-citelinks-to-legacy))
   nil)
 
-(defun cpror-citelink-content-to-legacy (content)
+(defun citeproc-orgref-citelink-content-to-legacy (content)
   "Convert a parsed citelink content to a legacy one."
   (let* ((first-item (car (split-string content ";")))
-	 (parsed (cpror-parse-locator-affix first-item))
+	 (parsed (citeproc-orgref--parse-locator-affix first-item))
 	 prefix suffix)
     (let-alist parsed
-      (if (not cpror-bibtex-export-use-affixes)
+      (if (not citeproc-orgref-bibtex-export-use-affixes)
 	  (concat .prefix .location .suffix)
 	(progn
 	  (setq prefix .prefix
 		suffix (concat .suffix .location))
 	  (if (null suffix) prefix (concat prefix "::" suffix)))))))
 
-(defun cpror-citelinks-to-legacy ()
+(defun citeproc-orgref-citelinks-to-legacy ()
   "Replace cite link contents with their legacy org-refversions."
   (interactive)
   (let ((links (--filter (and (string= (org-element-property :type it) "cite")
@@ -531,12 +532,12 @@ BACKEND is the org export backend used. Returns nil."
 			     'link #'identity)))
 	(offset 0))
     (dolist (link links)
-      (-let* (((begin end) (cpror-element-boundaries link))
+      (-let* (((begin end) (citeproc-orgref-element-boundaries link))
 	      (raw-link (org-element-property :raw-link link))
 	      (c-begin (+ offset (org-element-property :contents-begin link)))
 	      (c-end (+ offset (org-element-property :contents-end link)))
 	      (content (buffer-substring-no-properties c-begin c-end))
-	      (new-content (cpror-citelink-content-to-legacy content))
+	      (new-content (citeproc-orgref-citelink-content-to-legacy content))
 	      (new-link (if (s-blank-p new-content)
 			    (concat "[[" raw-link "]]")
 			  (concat "[[" raw-link "][" new-content "]]"))))
@@ -544,8 +545,8 @@ BACKEND is the org export backend used. Returns nil."
 	      new-link)
 	(cl-incf offset (- (length new-link) (- end begin)))))))
 
-(defun cpror-setup ()
-  (add-hook 'org-export-before-parsing-hook #'cpror-replace-links))
+(defun citeproc-orgref-setup ()
+  (add-hook 'org-export-before-parsing-hook #'citeproc-orgref-render-references))
 
 (provide 'citeproc-orgref)
 
