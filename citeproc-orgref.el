@@ -63,7 +63,7 @@
 (defvar citeproc-orgref-html-backends '(html twbs)
   "List of html-based org-mode export backends.")
 
-(defvar citeproc-orgref-latex-backends '(latex)
+(defvar citeproc-orgref-latex-backends nil
   "List of latex-based org-mode export backends.")
 
 (defvar citeproc-orgref-no-citelinks-backends '(ascii)
