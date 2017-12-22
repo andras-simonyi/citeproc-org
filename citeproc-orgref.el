@@ -253,8 +253,8 @@ otherwise."
 	  (unless (string= bibtex-file c-bibtex-file)
 	    (setf (citeproc-proc-getter c-proc)
 		  (citeproc-itemgetter-from-bibtex bibtex-file)
-		  (elt 1 citeproc-orgref--proc-cache) bibtex-file)
-	    (setq result c-proc)))))
+		  (elt 1 citeproc-orgref--proc-cache) bibtex-file))
+	  (setq result c-proc))))
     (or result
 	(let ((proc (citeproc-create
 		     style-file
