@@ -4,9 +4,9 @@
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
-;; URL: https://github.com/andras-simonyi/citeproc-el
+;; URL: https://github.com/andras-simonyi/citeproc-orgref
 ;; Keywords: bib
-;; Package-Requires: ((emacs "25") (citeproc "0.1"))
+;; Package-Requires: ((emacs "25.1") (org-ref "1.1.1") (citeproc "0.1"))
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@
 (require 'cl-lib)
 
 (require 'citeproc)
-(require 'cpr-itemgetters)
+(require 'citeproc-itemgetters)
 
 (defvar citeproc-orgref-default-style-file
   "/home/simka/projects/citeproc/styles/chicago-author-date.csl"
@@ -164,7 +164,7 @@ Its value is either nil or a list of the form
     ("vols." .  "volume"))
   "Alist mapping locator names to locators.")
 
-(defconst citeproc-orgref-label-regex
+(defconst citeproc-orgref--label-regex
   (let ((labels (map-keys citeproc-orgref--label-alist)))
     (concat "\\<\\("
 	    (mapconcat (lambda (x) (s-replace "." "\\." x))
@@ -246,15 +246,15 @@ keys."
 		 (string= locale c-locale))
 	(progn
 	  (unless (string= bibtex-file c-bibtex-file)
-	    (setf (cpr-proc-getter c-proc)
-		  (cpr-itgetter-from-bibtex bibtex-file)
+	    (setf (citeproc-proc-getter c-proc)
+		  (citeproc-itemgetter-from-bibtex bibtex-file)
 		  (elt 1 citeproc-orgref--proc-cache) bibtex-file)
 	    (setq result c-proc)))))
     (or result
-	(let ((proc (cpr-proc-create
+	(let ((proc (citeproc-create
 		     style-file
-		     (cpr-itgetter-from-bibtex bibtex-file)
-		     (cpr-locale-getter-from-dir citeproc-orgref-locales-dir)
+		     (citeproc-itemgetter-from-bibtex bibtex-file)
+		     (citeproc-locale-getter-from-dir citeproc-orgref-locales-dir)
 		     locale)))
 	  (setq citeproc-orgref--proc-cache
 		(list proc style-file bibtex-file locale))
@@ -334,8 +334,8 @@ keys."
 		 link-info)))))
     link-info))
 
-(defun citeproc--orgref-link-to-citation (link footnote-no new-fn
-					      &optional capitalize-outside-fn)
+(defun citeproc-orgref--link-to-citation (link footnote-no new-fn
+					       &optional capitalize-outside-fn)
   "Return a citeproc citation corresponding to org cite LINK.
 If CAPITALIZE-OUTSIDE-FN is  non-nil then set the
 `capitalize-first' slot of the citation struct to t when the link
@@ -350,7 +350,7 @@ is not in a footnote."
 	 (itemids (split-string path ","))
 	 (cites-ids (--map (cons 'id it)
 			   itemids)))
-    (cpr-citation-create
+    (citeproc-citation-create
      :note-index footnote-no
      :cites
      (let ((cites
@@ -374,7 +374,7 @@ is not in a footnote."
      :suppress-affixes (member type
 			       citeproc-orgref-suppress-affixes-link-types))))
  
-(defun citeproc-orgref-element-boundaries (element)
+(defun citeproc-orgref--element-boundaries (element)
   "Return the boundaries of an org ELEMENT.
 Returns a (BEGIN END) list -- post-blank positions are not
 considered when calculating END."
@@ -383,7 +383,7 @@ considered when calculating END."
 	(post-blank (org-element-property :post-blank element)))
     (list begin (- end post-blank))))
 
-(defun citeproc-orgref-format-html-bib (bib parameters)
+(defun citeproc-orgref--format-html-bib (bib parameters)
   "Format html bibliography BIB using formatting PARAMATERS."
   (let* ((char-width (car (s-match "[[:digit:].]+" citeproc-orgref-html-label-width-per-char)))
 	 (char-width-unit (substring citeproc-orgref-html-label-width-per-char (length char-width))))
@@ -414,35 +414,36 @@ considered when calculating END."
 (defun citeproc-orgref--bibliography (proc backend)
   "Return a bibliography using citeproc PROC."
   (cond ((memq backend citeproc-orgref-html-backends)
-	 (-let ((rendered (cpr-render-bib proc 'html (not citeproc-orgref-link-cites))))
+	 (-let ((rendered (citeproc-render-bib proc 'html (not citeproc-orgref-link-cites))))
 	   (citeproc-orgref-format-html-bib (car rendered) (cdr rendered))))
 	((memq backend citeproc-orgref-latex-backends)
-	 (citeproc-orgref--format-latex-bib (car (cpr-render-bib proc 'latex (not citeproc-orgref-link-cites)))))
+	 (citeproc-orgref--format-latex-bib (car (citeproc-render-bib proc 'latex (not citeproc-orgref-link-cites)))))
 	(t (concat citeproc-orgref-org-bib-header
-		   (car (cpr-render-bib proc 'org (or (memq backend citeproc-orgref-no-citelinks-backends)
+		   (car (citeproc-render-bib proc 'org (or (memq backend citeproc-orgref-no-citelinks-backends)
 						      (not citeproc-orgref-link-cites))))
 		   "\n"))))
 
 (defun citeproc-orgref--append-and-render-citations (link-info proc backend)
   "Render citations using LINK-INFO and PROC.
 Return the list of corresponding rendered citations."
-  (let* ((is-note-style (cpr-style-cite-note (cpr-proc-style proc)))
-	 (citations (--map (citeproc--orgref-link-to-citation (plist-get it :link)
-					      (plist-get it :fn-no)
-					      (plist-get it :new-fn)
-					      is-note-style)
+  (let* ((is-note-style (citeproc-style-cite-note (citeproc-proc-style proc)))
+	 (citations (--map (citeproc-orgref--link-to-citation
+			    (plist-get it :link)
+			    (plist-get it :fn-no)
+			    (plist-get it :new-fn)
+			    is-note-style)
 			   link-info)))
-    (cpr-proc-append-citations proc citations)
+    (citeproc-append-citations proc citations)
     (let* ((rendered
 	    (cond ((memq backend citeproc-orgref-html-backends)
 		   (--map (concat "@@html:" it "@@")
-			  (cpr-render-citations
+			  (citeproc-render-citations
 			   proc 'html (not citeproc-orgref-link-cites))))
 		  ((memq backend citeproc-orgref-latex-backends)
 		   (--map (concat "@@latex:" it "@@")
-			  (cpr-render-citations
+			  (citeproc-render-citations
 			   proc 'latex (not citeproc-orgref-link-cites))))
-		  (t (cpr-render-citations
+		  (t (citeproc-render-citations
 		      proc 'org (or (memq backend citeproc-orgref-no-citelinks-backends)
 				    (not citeproc-orgref-link-cites)))))))
       (setq rendered (cl-loop for l-i in link-info
@@ -476,10 +477,10 @@ BACKEND is the org export backend used. Returns nil."
 		  (proc (citeproc-orgref--get-proc bibtex-file))
 		  ((bl-begin bl-end)
 		   (and bib-link (citeproc-orgref-element-boundaries bib-link))))
-	    (cpr-proc-clear proc)
+	    (citeproc-proc-clear proc)
 	    (-let* ((link-info
 		     (citeproc-orgref--assemble-link-info links-and-notes link-count footnote-count
-					  (cpr-style-cite-note (cpr-proc-style proc))))
+					  (citeproc-style-cite-note (citeproc-proc-style proc))))
 		    (rendered-cites (citeproc-orgref--append-and-render-citations link-info proc backend))
 		    (rendered-bib (if citeproc-orgref-suppress-bib ""
 				    (citeproc-orgref--bibliography proc backend)))
@@ -507,10 +508,10 @@ BACKEND is the org export backend used. Returns nil."
 		;; The bibliography link was the last one
 		(setf (buffer-substring (+ bl-begin offset) (+ bl-end offset))
 		      rendered-bib))))))
-    (citeproc-orgref-citelinks-to-legacy))
+    (citeproc-orgref--citelinks-to-legacy))
   nil)
 
-(defun citeproc-orgref-citelink-content-to-legacy (content)
+(defun citeproc-orgref--citelink-content-to-legacy (content)
   "Convert a parsed citelink content to a legacy one."
   (let* ((first-item (car (split-string content ";")))
 	 (parsed (citeproc-orgref--parse-locator-affix first-item))
@@ -523,7 +524,7 @@ BACKEND is the org export backend used. Returns nil."
 		suffix (concat .suffix .location))
 	  (if (null suffix) prefix (concat prefix "::" suffix)))))))
 
-(defun citeproc-orgref-citelinks-to-legacy ()
+(defun citeproc-orgref--citelinks-to-legacy ()
   "Replace cite link contents with their legacy org-refversions."
   (interactive)
   (let ((links (--filter (and (string= (org-element-property :type it) "cite")
@@ -537,7 +538,7 @@ BACKEND is the org export backend used. Returns nil."
 	      (c-begin (+ offset (org-element-property :contents-begin link)))
 	      (c-end (+ offset (org-element-property :contents-end link)))
 	      (content (buffer-substring-no-properties c-begin c-end))
-	      (new-content (citeproc-orgref-citelink-content-to-legacy content))
+	      (new-content (citeproc-orgref--citelink-content-to-legacy content))
 	      (new-link (if (s-blank-p new-content)
 			    (concat "[[" raw-link "]]")
 			  (concat "[[" raw-link "][" new-content "]]"))))
