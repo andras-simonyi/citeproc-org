@@ -50,12 +50,10 @@
   "List of supported cite link types.")
 
 (defvar citeproc-orgref-suppress-affixes-link-types '("citealt")
-  "List of cite link types for which citation affixes should be
-  suppressed.")
+  "Suppress citation affixes for these cite link types.")
 
 (defvar citeproc-orgref-suppress-first-author-link-types '("citeyear")
-  "List of cite link types for which the first author should be 
-  suppressed.")
+  "Suppress first author for these cite link types.")
 
 (defvar citeproc-orgref-html-backends '(html twbs)
   "List of html-based org-mode export backends.")
@@ -72,7 +70,8 @@
 (defvar citeproc-orgref-locales-dir "/home/simka/projects/locales"
   "Directory containing csl locale files.")
 
-(defvar citeproc-orgref-html-bib-header "<h2 class='citeproc-orgref-bib-h2'>Bibliography</h1>\n"
+(defvar citeproc-orgref-html-bib-header
+  "<h2 class='citeproc-orgref-bib-h2'>Bibliography</h1>\n"
   "HTML bibliography header to use for html export.")
 
 (defvar citeproc-orgref-latex-bib-header "\\section*{Bibliography}\n\n"
@@ -119,13 +118,13 @@ Its value is either nil or a list of the form
     ("col." . "column")
     ("cols." . "column")
     ("column" . "column")
-    ("figure" . "figure") 
+    ("figure" . "figure")
     ("fig." .  "figure")
     ("figs." .  "figure")
-    ( "folio" . "folio") 
+    ( "folio" . "folio")
     ("fol." .  "folio")
     ("fols." .  "folio")
-    ("number" . "number") 
+    ("number" . "number")
     ("no." .  "number")
     ("nos." .  "number")
     ("line" . "line")
@@ -134,7 +133,7 @@ Its value is either nil or a list of the form
     ("note" . "note")
     ("n." .  "note")
     ("nn." .  "note")
-    ("opus" . "opus") 
+    ("opus" . "opus")
     ("op." .  "opus")
     ("opp." .  "opus")
     ("page" . "page")
@@ -156,10 +155,10 @@ Its value is either nil or a list of the form
     ("sub verbo" . "sub verbo")
     ("s.v." .  "sub verbo")
     ("s.vv." . "sub verbo")
-    ("verse" . "verse") 
+    ("verse" . "verse")
     ("v." .  "verse")
     ("vv." .  "verse")
-    ("volume" . "volume") 
+    ("volume" . "volume")
     ("vol." .  "volume")
     ("vols." .  "volume"))
   "Alist mapping locator names to locators.")
@@ -173,8 +172,8 @@ Its value is either nil or a list of the form
 
 (defun citeproc-orgref--parse-locator-affix (s)
   "Parse string S as a cite's locator and affix description.
-Return an alist with `locator', `label', `prefix' and `suffix'
-keys."
+Return the parse as an alist with `locator', `label', `prefix'
+and `suffix' keys."
   (if (s-blank-p s) nil
     (let ((label-matches (s-matched-positions-all citeproc-orgref-label-regex s 1))
 	  (digit-matches (s-matched-positions-all "\\<\\w*[[:digit:]]+" s))
@@ -213,7 +212,7 @@ keys."
 	(prefix . ,prefix) (suffix . ,suffix)))))
 
 (defun citeproc-orgref--in-fn-p (elt)
-  "Whether org element ELT is in a footnote."
+  "Return whether org element ELT is in a footnote."
   (let ((curr (org-element-property :parent elt))
 	result)
     (while (and curr (not result))
@@ -221,10 +220,10 @@ keys."
 		  '(footnote-definition footnote-reference))
 	(setq result (or (org-element-property :label curr) t)))
       (setq curr (org-element-property :parent curr)))
-    result)) 
+    result))
 
 (defun citeproc-orgref--get-option-val (opt)
-  "Return the value of org-mode option OPT."
+  "Return the value of org mode option OPT."
   (goto-char (point-min))
   (if (re-search-forward
        (concat "^#\\+" opt ":\\(.+\\)$")
@@ -236,8 +235,12 @@ keys."
     nil))
 
 (defun citeproc-orgref--get-proc (bibtex-file)
-  "Return a cpr processor to use and update the cache if needed."
-  (let ((style-file (or (citeproc-orgref--get-option-val "csl-style") citeproc-orgref-default-style-file))
+  "Return a citeproc processor reading items from BIBTEX-FILE.
+Return the buffer's cached processor if it is available and had
+the same parameters. Create and return a new processor
+otherwise."
+  (let ((style-file (or (citeproc-orgref--get-option-val "csl-style")
+			citeproc-orgref-default-style-file))
 	(locale (or (citeproc-orgref--get-option-val "language") "en"))
 	result)
     (-when-let ((c-proc c-style-file c-bibtex-file c-locale)
@@ -261,7 +264,13 @@ keys."
 	  proc))))
 
 (defun citeproc-orgref--links-and-notes()
-  "Collect bib-related links and info about them."
+  "Collect the buffer's bib-related links and info about them.
+Returns a list (BIB-LINKS LINKS-AND-NOTES CITE-LINKS-COUNT
+FOOTNOTES-COUNT) where LINKS-AND-NOTES is the list of cite link
+and footnote representations (lists of the form (`link'
+CITE-LINK-IDX CITE-LINK) or (`footnote' FN-LABEL [CITE-LINK_n ...
+CITE-LINK_0])), in which CITE_LINK_n is the n-th cite-link
+occurring in the footnote."
   (let* ((elts (org-element-map (org-element-parse-buffer)
 		   '(footnote-reference link) #'identity))
 	 cite-links bib-links links-and-notes
@@ -271,17 +280,17 @@ keys."
     (dolist (elt elts)
       (if (eq 'footnote-reference (org-element-type elt))
 	  (progn
-	   (cl-incf footnotes-count)
-	   ;; footnotes repesented as ('footnote <label> <link_n> ... <link_0>)
-	   (push (list 'footnote (org-element-property :label elt))
-		 links-and-notes))
+	    (cl-incf footnotes-count)
+	    ;; footnotes repesented as ('footnote <label> <link_n> ... <link_0>)
+	    (push (list 'footnote (org-element-property :label elt))
+		  links-and-notes))
 	(let ((link-type (org-element-property :type elt)))
 	  (cond
 	   ((member link-type citeproc-orgref-link-types)
 	    (push elt cite-links)
 	    (cl-incf cite-links-count)
 	    (let ((fn-label (citeproc-orgref--in-fn-p elt))
-		  ;; links as ('link <link-idx>)
+		  ;; links as ('link <link-idx> link)
 		  (indexed (list 'link act-link-no elt)))
 	      (cl-incf act-link-no)
 	      (pcase fn-label
@@ -297,14 +306,22 @@ keys."
 		     (if fn-with-label
 			 (setf (cddr fn-with-label)
 			       (cons indexed (cddr fn-with-label)))
-		       (error "No footnote reference before footnote definition with label %s" fn-label)))))))
+		       (error
+			"No footnote reference before footnote definition with label %s"
+			fn-label)))))))
 	   ((string= link-type "bibliography")
 	    (push elt bib-links))))))
-    (list (nreverse cite-links) bib-links links-and-notes cite-links-count footnotes-count)))
+    (list (nreverse cite-links)
+	  bib-links links-and-notes cite-links-count footnotes-count)))
 
-(defun citeproc-orgref--assemble-link-info (links-and-notes link-count footnote-count
-							    &optional all-links-are-notes)
-  "Return position and note info using LINKS-AND-NOTES."
+(defun citeproc-orgref--assemble-link-info
+    (links-and-notes link-count footnote-count &optional all-links-are-notes)
+  "Return position and note info using LINKS-AND-NOTES info.
+The format and content of LINKS-AND-NOTES is as described in the
+documentation of `citeproc-orgref--links-and-notes'. LINK-COUNT
+and FOOTNOTE-COUNT is the number of links and footnotes in
+LINKS-AND-NOTES. If optional ALL-LINKS-ARE-NOTES is non-nil then
+treat all links as footnotes (usde for note CSL styles)."
   (let (link-info
 	(act-fn-no (let ((links-and-notes-count (length links-and-notes)))
 		     (1+ (if all-links-are-notes
@@ -336,8 +353,10 @@ keys."
 
 (defun citeproc-orgref--link-to-citation (link footnote-no new-fn
 					       &optional capitalize-outside-fn)
-  "Return a citeproc citation corresponding to org cite LINK.
-If CAPITALIZE-OUTSIDE-FN is  non-nil then set the
+  "Return a citeproc citation corresponding to an org cite LINK.
+FOOTNOTE-NO is nil if LINK is not in a footnote or the number of
+the link's footnote. If NEW-FN is non-nil the the link was not in
+a footnote biIf CAPITALIZE-OUTSIDE-FN is non-nil then set the
 `capitalize-first' slot of the citation struct to t when the link
 is not in a footnote."
   (let* ((type (org-element-property :type link))
@@ -360,10 +379,11 @@ is not in a footnote."
 		       (cites-no (length cites-ids))
 		       (rest-no (length cites-rest))
 		       (diff (- cites-no rest-no))
-		       (cites-rest-filled (let* ()
-					    (if (> diff 0)
-						(-concat cites-rest (make-list diff nil))
-					      cites-rest))))
+		       (cites-rest-filled
+			(let* ()
+			  (if (> diff 0)
+			      (-concat cites-rest (make-list diff nil))
+			    cites-rest))))
 		  (-zip cites-ids cites-rest-filled))
 	      (mapcar #'list cites-ids))))
        (if (member type citeproc-orgref-suppress-first-author-link-types)
@@ -384,10 +404,12 @@ considered when calculating END."
     (list begin (- end post-blank))))
 
 (defun citeproc-orgref--format-html-bib (bib parameters)
-  "Format html bibliography BIB using formatting PARAMATERS."
-  (let* ((char-width (car (s-match "[[:digit:].]+" citeproc-orgref-html-label-width-per-char)))
-	 (char-width-unit (substring citeproc-orgref-html-label-width-per-char (length char-width))))
-    (let-alist parameters 
+  "Format html bibliography BIB using formatting PARAMETERS."
+  (let* ((char-width (car (s-match "[[:digit:].]+"
+				   citeproc-orgref-html-label-width-per-char)))
+	 (char-width-unit (substring citeproc-orgref-html-label-width-per-char
+				     (length char-width))))
+    (let-alist parameters
       (concat "\n#+BEGIN_EXPORT html\n"
 	      (when .second-field-align
 		(concat "<style>.csl-left-margin{float: left; padding-right: 0em;} "
@@ -412,19 +434,24 @@ considered when calculating END."
 		 bib "\n\\end{hangparas}\n#+END_EXPORT\n"))
 
 (defun citeproc-orgref--bibliography (proc backend)
-  "Return a bibliography using citeproc PROC."
+  "Return a bibliography using citeproc PROC for BACKEND."
   (cond ((memq backend citeproc-orgref-html-backends)
-	 (-let ((rendered (citeproc-render-bib proc 'html (not citeproc-orgref-link-cites))))
+	 (-let ((rendered
+		 (citeproc-render-bib proc 'html (not citeproc-orgref-link-cites))))
 	   (citeproc-orgref-format-html-bib (car rendered) (cdr rendered))))
 	((memq backend citeproc-orgref-latex-backends)
-	 (citeproc-orgref--format-latex-bib (car (citeproc-render-bib proc 'latex (not citeproc-orgref-link-cites)))))
+	 (citeproc-orgref--format-latex-bib
+	  (car (citeproc-render-bib proc 'latex (not citeproc-orgref-link-cites)))))
 	(t (concat citeproc-orgref-org-bib-header
-		   (car (citeproc-render-bib proc 'org (or (memq backend citeproc-orgref-no-citelinks-backends)
-						      (not citeproc-orgref-link-cites))))
+		   (car (citeproc-render-bib
+			 proc
+			 'org
+			 (or (memq backend citeproc-orgref-no-citelinks-backends)
+			     (not citeproc-orgref-link-cites))))
 		   "\n"))))
 
 (defun citeproc-orgref--append-and-render-citations (link-info proc backend)
-  "Render citations using LINK-INFO and PROC.
+  "Render citations using LINK-INFO and PROC for BACKEND.
 Return the list of corresponding rendered citations."
   (let* ((is-note-style (citeproc-style-cite-note (citeproc-proc-style proc)))
 	 (citations (--map (citeproc-orgref--link-to-citation
@@ -453,13 +480,13 @@ Return the list of corresponding rendered citations."
 					rendered-citation)))
       (citeproc-orgref--reorder-rendered-citations rendered link-info))))
 
-(defun citeproc-orgref--reorder-rendered-citations (rendered link-info)
+(defun citeproc-orgref--reorder-rendered-citations (rendered-citations link-info)
+  "Put RENDERED-CITATIONS into insertion order using LINK-INFO."
   (let ((sorted (cl-sort link-info #'< :key (lambda (x) (plist-get x :link-no)))))
-    (--map (elt rendered (plist-get it :cite-no)) sorted)))
+    (--map (elt rendered-citations (plist-get it :cite-no)) sorted)))
 
 (defun citeproc-orgref-render-references (backend)
-  "Replace cite and bib links with references.
-BACKEND is the org export backend used. Returns nil."
+  "Render cite and bib links for export with BACKEND."
   (interactive)
   (if (not (memq backend citeproc-orgref-ignore-backends))
       (-let (((cite-links bib-links links-and-notes link-count footnote-count)
@@ -479,9 +506,11 @@ BACKEND is the org export backend used. Returns nil."
 		   (and bib-link (citeproc-orgref-element-boundaries bib-link))))
 	    (citeproc-proc-clear proc)
 	    (-let* ((link-info
-		     (citeproc-orgref--assemble-link-info links-and-notes link-count footnote-count
-					  (citeproc-style-cite-note (citeproc-proc-style proc))))
-		    (rendered-cites (citeproc-orgref--append-and-render-citations link-info proc backend))
+		     (citeproc-orgref--assemble-link-info
+		      links-and-notes link-count footnote-count
+		      (citeproc-style-cite-note (citeproc-proc-style proc))))
+		    (rendered-cites
+		     (citeproc-orgref--append-and-render-citations link-info proc backend))
 		    (rendered-bib (if citeproc-orgref-suppress-bib ""
 				    (citeproc-orgref--bibliography proc backend)))
 		    (offset 0)
@@ -512,7 +541,7 @@ BACKEND is the org export backend used. Returns nil."
   nil)
 
 (defun citeproc-orgref--citelink-content-to-legacy (content)
-  "Convert a parsed citelink content to a legacy one."
+  "Convert a parsed citelink CONTENT to a legacy one."
   (let* ((first-item (car (split-string content ";")))
 	 (parsed (citeproc-orgref--parse-locator-affix first-item))
 	 prefix suffix)
@@ -525,7 +554,7 @@ BACKEND is the org export backend used. Returns nil."
 	  (if (null suffix) prefix (concat prefix "::" suffix)))))))
 
 (defun citeproc-orgref--citelinks-to-legacy ()
-  "Replace cite link contents with their legacy org-refversions."
+  "Replace cite link contents with their legacy org-ref versions."
   (interactive)
   (let ((links (--filter (and (string= (org-element-property :type it) "cite")
 			      (org-element-property :contents-begin it))
@@ -547,6 +576,7 @@ BACKEND is the org export backend used. Returns nil."
 	(cl-incf offset (- (length new-link) (- end begin)))))))
 
 (defun citeproc-orgref-setup ()
+  "Add citeproc-orgref rendering to the `org-export-before-parsing-hook' hook."
   (add-hook 'org-export-before-parsing-hook #'citeproc-orgref-render-references))
 
 (provide 'citeproc-orgref)
