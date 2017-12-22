@@ -105,7 +105,7 @@ style.")
   "The size of hanging-indent for LaTeX ouput in valid LaTeX units.
 Always used for LaTeX output.")
 
-(defvar-local citeproc-orgref--proc-cache nil
+(defvar citeproc-orgref--proc-cache nil
   "Cached citeproc processor for citeproc-orgref.
 Its value is either nil or a list of the form
 (PROC STYLE-FILE BIBTEX-FILE LOCALE).")
