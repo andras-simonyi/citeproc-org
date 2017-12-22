@@ -484,6 +484,7 @@ Return the list of corresponding rendered citations."
   (let ((sorted (cl-sort link-info #'< :key (lambda (x) (plist-get x :link-no)))))
     (--map (elt rendered-citations (plist-get it :cite-no)) sorted)))
 
+;;;###autoload
 (defun citeproc-orgref-render-references (backend)
   "Render cite and bib links for export with BACKEND."
   (interactive)
@@ -573,11 +574,6 @@ Return the list of corresponding rendered citations."
 	(setf (buffer-substring (+ begin offset) (+ end offset))
 	      new-link)
 	(cl-incf offset (- (length new-link) (- end begin)))))))
-
-;;;###autoload
-(defun citeproc-orgref-setup ()
-  "Add citeproc-orgref rendering to the `org-export-before-parsing-hook' hook."
-  (add-hook 'org-export-before-parsing-hook #'citeproc-orgref-render-references))
 
 (provide 'citeproc-orgref)
 
