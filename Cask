@@ -3,4 +3,4 @@
 
 (package-file "citeproc-orgref.el")
 
-(files "citeproc-orgref.el" "styles" "locales" )
+(files "*.el" "styles" "locales" )
