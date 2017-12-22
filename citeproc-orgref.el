@@ -6,7 +6,7 @@
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
 ;; URL: https://github.com/andras-simonyi/citeproc-orgref
 ;; Keywords: bib
-;; Package-Requires: ((emacs "25.1") (org-ref "1.1.1") (citeproc "0.1"))
+;; Package-Requires: ((emacs "25.1") (org-ref "1.1.1") (citeproc "0.1") (f "0.18.0"))
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,7 @@
 
 (require 'subr-x)
 (require 'map)
+(require 'f)
 (require 'ox)
 (require 'let-alist)
 (require 'org-element)
@@ -42,8 +43,13 @@
 (require 'citeproc)
 (require 'citeproc-itemgetters)
 
-(defvar citeproc-orgref-default-style-file "./styles/chicago-author-date.csl"
-  "Default CSL style file.")
+(let* ((package-dir (f-dirname load-file-name))
+       (default-style (f-join package-dir "styles" "chicago-author-date.csl"))
+       (default-locales (f-join package-dir "locales")))
+  (defvar citeproc-orgref-default-style-file default-style
+    "Default CSL style file.")
+  (defvar citeproc-orgref-locales-dir default-locales
+    "Directory of CSL locale files."))
 
 (defvar citeproc-orgref-link-types '("cite" "citealt" "citeyear")
   "List of supported cite link types.")
@@ -65,9 +71,6 @@
 
 (defvar citeproc-orgref-ignore-backends '(beamer)
   "List of backends that shouldn't be processed by citeproc.")
-
-(defvar citeproc-orgref-locales-dir "./locales"
-  "Directory containing csl locale files.")
 
 (defvar citeproc-orgref-html-bib-header
   "<h2 class='citeproc-orgref-bib-h2'>Bibliography</h1>\n"
@@ -437,7 +440,7 @@ considered when calculating END."
   (cond ((memq backend citeproc-orgref-html-backends)
 	 (-let ((rendered
 		 (citeproc-render-bib proc 'html (not citeproc-orgref-link-cites))))
-	   (citeproc-orgref-format-html-bib (car rendered) (cdr rendered))))
+	   (citeproc-orgref--format-html-bib (car rendered) (cdr rendered))))
 	((memq backend citeproc-orgref-latex-backends)
 	 (citeproc-orgref--format-latex-bib
 	  (car (citeproc-render-bib proc 'latex (not citeproc-orgref-link-cites)))))
@@ -503,7 +506,7 @@ Return the list of corresponding rendered citations."
 		  (bibtex-file (org-element-property :path bib-link))
 		  (proc (citeproc-orgref--get-proc bibtex-file))
 		  ((bl-begin bl-end)
-		   (and bib-link (citeproc-orgref-element-boundaries bib-link))))
+		   (and bib-link (citeproc-orgref--element-boundaries bib-link))))
 	    (citeproc-proc-clear proc)
 	    (-let* ((link-info
 		     (citeproc-orgref--assemble-link-info
@@ -518,7 +521,7 @@ Return the list of corresponding rendered citations."
 	      (cl-loop for rendered in rendered-cites
 		       for link in cite-links
 		       do
-		       (-let* (((begin end) (citeproc-orgref-element-boundaries link)))
+		       (-let* (((begin end) (citeproc-orgref--element-boundaries link)))
 			 (when (and bib-link (> begin bl-end))
 			   ;; Reached a cite link after the bibliography link so
 			   ;; we insert the rendered bibliography before it
@@ -554,7 +557,7 @@ Return the list of corresponding rendered citations."
 	  (if (null suffix) prefix (concat prefix "::" suffix)))))))
 
 (defun citeproc-orgref--citelinks-to-legacy ()
-  "Replace cite link contents with their legacy org-ref versions."
+  "Replace cite link contents with their legacy `org-ref' versions."
   (interactive)
   (let ((links (--filter (and (string= (org-element-property :type it) "cite")
 			      (org-element-property :contents-begin it))
@@ -562,7 +565,7 @@ Return the list of corresponding rendered citations."
 			     'link #'identity)))
 	(offset 0))
     (dolist (link links)
-      (-let* (((begin end) (citeproc-orgref-element-boundaries link))
+      (-let* (((begin end) (citeproc-orgref--element-boundaries link))
 	      (raw-link (org-element-property :raw-link link))
 	      (c-begin (+ offset (org-element-property :contents-begin link)))
 	      (c-end (+ offset (org-element-property :contents-end link)))
