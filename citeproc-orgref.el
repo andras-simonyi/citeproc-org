@@ -63,13 +63,13 @@
 (defvar citeproc-orgref-html-backends '(html twbs)
   "List of html-based org-mode export backends.")
 
-(defvar citeproc-orgref-latex-backends nil
+(defvar citeproc-orgref-latex-backends '(latex beamer)
   "List of latex-based org-mode export backends.")
 
 (defvar citeproc-orgref-no-citelinks-backends '(ascii)
   "Backends for which cite linking should always be turned off.")
 
-(defvar citeproc-orgref-ignore-backends '(beamer)
+(defvar citeproc-orgref-ignore-backends '(latex beamer)
   "List of backends that shouldn't be processed by citeproc.")
 
 (defvar citeproc-orgref-html-bib-header
