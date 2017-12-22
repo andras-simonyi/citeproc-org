@@ -82,9 +82,6 @@
 (defvar citeproc-orgref-org-bib-header "* Bibliography\n"
   "Org-mode bibliography header to use for export.")
 
-(defvar citeproc-orgref-suppress-bib nil
-  "Don't insert bibliography during export.")
-
 (defvar citeproc-orgref-bibtex-export-use-affixes nil
   "Use separate prefix and suffix for bibtex export.")
 
@@ -311,7 +308,8 @@ occurring in the footnote."
 		       (error
 			"No footnote reference before footnote definition with label %s"
 			fn-label)))))))
-	   ((string= link-type "bibliography")
+	   ((or (string= link-type "bibliography")
+		(string= link-type "nobibliography"))
 	    (push elt bib-links))))))
     (list (nreverse cite-links)
 	  bib-links links-and-notes cite-links-count footnotes-count)))
@@ -504,6 +502,8 @@ Return the list of corresponding rendered citations."
 			     ((= bl-count 0)
 			      (error "Missing bibliography link"))))
 		  (bibtex-file (org-element-property :path bib-link))
+		  (omit-bib (string= (org-element-property :type bib-link)
+				     "nobibliography"))
 		  (proc (citeproc-orgref--get-proc bibtex-file))
 		  ((bl-begin bl-end)
 		   (and bib-link (citeproc-orgref--element-boundaries bib-link))))
@@ -514,7 +514,7 @@ Return the list of corresponding rendered citations."
 		      (citeproc-style-cite-note (citeproc-proc-style proc))))
 		    (rendered-cites
 		     (citeproc-orgref--append-and-render-citations link-info proc backend))
-		    (rendered-bib (if citeproc-orgref-suppress-bib ""
+		    (rendered-bib (if omit-bib ""
 				    (citeproc-orgref--bibliography proc backend)))
 		    (offset 0)
 		    (bib-inserted-p nil))
