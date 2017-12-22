@@ -574,6 +574,7 @@ Return the list of corresponding rendered citations."
 	      new-link)
 	(cl-incf offset (- (length new-link) (- end begin)))))))
 
+;;;###autoload
 (defun citeproc-orgref-setup ()
   "Add citeproc-orgref rendering to the `org-export-before-parsing-hook' hook."
   (add-hook 'org-export-before-parsing-hook #'citeproc-orgref-render-references))
