@@ -42,8 +42,7 @@
 (require 'citeproc)
 (require 'citeproc-itemgetters)
 
-(defvar citeproc-orgref-default-style-file
-  "/home/simka/projects/citeproc/styles/chicago-author-date.csl"
+(defvar citeproc-orgref-default-style-file "./styles/chicago-author-date.csl"
   "Default CSL style file.")
 
 (defvar citeproc-orgref-link-types '("cite" "citealt" "citeyear")
@@ -67,7 +66,7 @@
 (defvar citeproc-orgref-ignore-backends '(beamer)
   "List of backends that shouldn't be processed by citeproc.")
 
-(defvar citeproc-orgref-locales-dir "/home/simka/projects/locales"
+(defvar citeproc-orgref-locales-dir "./locales"
   "Directory containing csl locale files.")
 
 (defvar citeproc-orgref-html-bib-header
