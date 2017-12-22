@@ -177,7 +177,7 @@ Its value is either nil or a list of the form
 Return the parse as an alist with `locator', `label', `prefix'
 and `suffix' keys."
   (if (s-blank-p s) nil
-    (let ((label-matches (s-matched-positions-all citeproc-orgref-label-regex s 1))
+    (let ((label-matches (s-matched-positions-all citeproc-orgref--label-regex s 1))
 	  (digit-matches (s-matched-positions-all "\\<\\w*[[:digit:]]+" s))
 	  (comma-matches (s-matched-positions-all "," s))
 	  label locator prefix suffix location)
