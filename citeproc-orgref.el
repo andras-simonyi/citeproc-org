@@ -460,7 +460,7 @@ Return the list of corresponding rendered citations."
 			    (plist-get it :new-fn)
 			    is-note-style)
 			   link-info)))
-    (citeproc-append-citations proc citations)
+    (citeproc-append-citations citations proc)
     (let* ((rendered
 	    (cond ((memq backend citeproc-orgref-html-backends)
 		   (--map (concat "@@html:" it "@@")
