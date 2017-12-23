@@ -39,6 +39,7 @@
 (require 'let-alist)
 (require 'org-element)
 (require 'cl-lib)
+(require 'org-ref)
 
 (require 'citeproc)
 (require 'citeproc-itemgetters)
@@ -50,9 +51,6 @@
     "Default CSL style file.")
   (defvar citeproc-orgref-locales-dir default-locales
     "Directory of CSL locale files."))
-
-(defvar citeproc-orgref-link-types '("cite" "citealt" "citeyear")
-  "List of supported cite link types.")
 
 (defvar citeproc-orgref-suppress-affixes-link-types '("citealt")
   "Suppress citation affixes for these cite link types.")
@@ -70,7 +68,7 @@
   "Backends for which cite linking should always be turned off.")
 
 (defvar citeproc-orgref-ignore-backends '(latex beamer)
-  "List of backends that shouldn't be processed by citeproc.")
+  "List of backends that shouldn't be processed by citeproc-el.")
 
 (defvar citeproc-orgref-html-bib-header
   "<h2 class='citeproc-orgref-bib-h2'>Bibliography</h1>\n"
@@ -285,7 +283,7 @@ occurring in the footnote."
 		  links-and-notes))
 	(let ((link-type (org-element-property :type elt)))
 	  (cond
-	   ((member link-type citeproc-orgref-link-types)
+	   ((member link-type org-ref-cite-types)
 	    (push elt cite-links)
 	    (cl-incf cite-links-count)
 	    (let ((fn-label (citeproc-orgref--in-fn-p elt))
