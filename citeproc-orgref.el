@@ -44,59 +44,101 @@
 (require 'citeproc)
 (require 'citeproc-itemgetters)
 
-(defvar citeproc-orgref-default-style-file nil
-  "Default CSL style file.")
+(defgroup citeproc-orgref nil
+  "Customization group for citeproc-orgref."
+  :tag "Citeproc Orgref"
+  :group 'org-ref)
 
-(defvar citeproc-orgref-locales-dir nil
-  "Directory of CSL locale files.")
+(defcustom citeproc-orgref-default-style-file nil
+  "Default CSL style file.
+If nil then the chicago-author-date style is used as a fallback."
+  :type 'file
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-suppress-affixes-link-types '("citealt")
-  "Suppress citation affixes for these cite link types.")
+(defcustom citeproc-orgref-locales-dir nil
+  "Directory of CSL locale files.
+If nil then only the fallback en-US locale will be available."
+  :type 'dir
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-suppress-first-author-link-types '("citeyear")
-  "Suppress first author for these cite link types.")
-
-(defvar citeproc-orgref-html-backends '(html twbs)
-  "List of html-based org-mode export backends.")
-
-(defvar citeproc-orgref-latex-backends '(latex beamer)
-  "List of latex-based org-mode export backends.")
-
-(defvar citeproc-orgref-no-citelinks-backends '(ascii)
-  "Backends for which cite linking should always be turned off.")
-
-(defvar citeproc-orgref-ignore-backends '(latex beamer)
-  "List of backends that shouldn't be processed by citeproc-el.")
-
-(defvar citeproc-orgref-html-bib-header
+(defcustom citeproc-orgref-html-bib-header
   "<h2 class='citeproc-orgref-bib-h2'>Bibliography</h1>\n"
-  "HTML bibliography header to use for html export.")
+  "HTML bibliography header to use for html export."
+  :type 'string
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-latex-bib-header "\\section*{Bibliography}\n\n"
-  "HTML bibliography header to use for html export.")
+(defcustom citeproc-orgref-latex-bib-header "\\section*{Bibliography}\n\n"
+  "HTML bibliography header to use for LaTeX export."
+  :type 'string
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-org-bib-header "* Bibliography\n"
-  "Org-mode bibliography header to use for export.")
+(defcustom citeproc-orgref-org-bib-header "* Bibliography\n"
+  "Org-mode bibliography header to use for non-html and non-LaTeX export."
+  :type 'string
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-bibtex-export-use-affixes nil
-  "Use separate prefix and suffix for bibtex export.")
+(defcustom citeproc-orgref-suppress-affixes-cite-link-types '("citealt")
+  "Suppress citation affixes for these cite link types."
+  :type '(repeat :tag "List of citation link types" string)
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-link-cites t
-  "Link cites to references.")
+(defcustom citeproc-orgref-suppress-first-author-cite-link-types '("citeyear")
+  "Suppress first author for these cite link types."
+  :type '(repeat :tag "List of citation link types" string)
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-html-hanging-indent "1.5em"
+(defcustom citeproc-orgref-link-cites t
+  "Link cites to references."
+  :type 'boolean
+  :group 'citeproc-orgref)
+
+(defcustom citeproc-orgref-bibtex-export-use-affixes nil
+  "Use separate prefix and suffix cite arguments for LaTeX export.
+Some BibTeX packages (notably, NatBib) support separate prefix
+and postfix arguments. If non-nil then affixes will be passed as
+separate arguments."
+  :type 'boolean
+  :group 'citeproc-orgref)
+
+(defcustom citeproc-orgref-html-backends '(html twbs)
+  "Use the html formatter for these org-mode export backends."
+  :type '(repeat symbol)
+  :group 'citeproc-orgref)
+
+(defcustom citeproc-orgref-latex-backends '(latex beamer)
+  "Use the LaTeX formatter for these org-mode export backends."
+  :type '(repeat symbol)
+  :group 'citeproc-orgref)
+
+(defcustom citeproc-orgref-no-citelinks-backends '(ascii)
+  "Backends for which cite linking should always be turned off."
+  :type '(repeat symbol)
+  :group 'citeproc-orgref)
+
+(defcustom citeproc-orgref-ignore-backends '(latex beamer)
+  "List of backends whose output shouldn't be processed by citeproc-orgref."
+  :type '(repeat symbol)
+  :group 'citeproc-orgref)
+
+(defcustom citeproc-orgref-html-hanging-indent "1.5em"
   "The size of hanging-indent for html ouput in valid CSS units.
 Used only when hanging-indent is activated by the used CSL
-style.")
+style."
+  :type 'string
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-html-label-width-per-char "0.6em"
+(defcustom citeproc-orgref-html-label-width-per-char "0.6em"
   "Character width in CSS units for calculating entry label widths.
 Used only when second-field-align is activated by the used CSL
-style.")
+style."
+  :type 'string
+  :group 'citeproc-orgref)
 
-(defvar citeproc-orgref-latex-hanging-indent "1.5em"
+(defcustom citeproc-orgref-latex-hanging-indent "1.5em"
   "The size of hanging-indent for LaTeX ouput in valid LaTeX units.
-Always used for LaTeX output.")
+Always used for LaTeX output."
+  :type 'string
+  :group 'citeproc-orgref)
 
 (defvar citeproc-orgref--proc-cache nil
   "Cached citeproc processor for citeproc-orgref.
@@ -393,13 +435,13 @@ is not in a footnote."
 			    cites-rest))))
 		  (-zip cites-ids cites-rest-filled))
 	      (mapcar #'list cites-ids))))
-       (if (member type citeproc-orgref-suppress-first-author-link-types)
+       (if (member type citeproc-orgref-suppress-first-author-cite-link-types)
 	   (cons (cons '(suppress-author . t) (car cites)) (cdr cites))
 	 cites))
      :capitalize-first (and capitalize-outside-fn
 			    new-fn)
      :suppress-affixes (member type
-			       citeproc-orgref-suppress-affixes-link-types))))
+			       citeproc-orgref-suppress-affixes-cite-link-types))))
  
 (defun citeproc-orgref--element-boundaries (element)
   "Return the boundaries of an org ELEMENT.
@@ -560,7 +602,7 @@ Return the list of corresponding rendered citations."
 	  (concat .prefix .location .suffix)
 	(progn
 	  (setq prefix .prefix
-		suffix (concat .suffix .location))
+		suffix (concat .location suffix))
 	  (if (null suffix) prefix (concat prefix "::" suffix)))))))
 
 (defun citeproc-orgref--citelinks-to-legacy ()
