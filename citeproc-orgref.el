@@ -1,3 +1,9 @@
+;;; Commentary:
+
+;; Functions to render org-ref bibliographic reference links in Citation Style
+;; Language (CSL) styles using the citeproc-el library. See the accompanying
+;; README for full documentation.
+
 ;;; citeproc-orgref.el --- Render org-ref references in CSL styles -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
@@ -23,12 +29,6 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;; This file is not part of GNU Emacs.
-
-;;; Commentary:
-
-;; Functions to render org-ref bibliographic reference links in Citation Style
-;; Language (CSL) styles using the citeproc-el library. See the accompanying
-;; README for full documentation.
 
 ;;; Code:
 
@@ -145,13 +145,16 @@ Always used for LaTeX output."
 Its value is either nil or a list of the form
 (PROC STYLE-FILE BIBTEX-FILE LOCALE).")
 
-(let* ((package-dir (f-dirname load-file-name))
-       (fallback-style (f-join package-dir "styles" "chicago-author-date.csl"))
-       (fallback-locales (f-join package-dir "locales")))
-  (defconst citeproc-orgref--fallback-style-file fallback-style
-    "Default CSL style file.")
-  (defconst citeproc-orgref--fallback-locales-dir fallback-locales
-    "Directory of CSL locale files."))
+(defconst citeproc-orgref--load-dir (f-dirname load-file-name)
+  "The dir from which this file was loaded.")
+
+(defconst citeproc-orgref--fallback-style-file
+  (f-join citeproc-orgref--load-dir  "styles" "chicago-author-date.csl")
+  "Default CSL style file.")
+
+(defconst citeproc-orgref--fallback-locales-dir
+  (f-join citeproc-orgref--load-dir "locales")
+  "Directory of CSL locale files.")
 
 (defconst citeproc-orgref--label-alist
   '(("bk." . "book")
@@ -279,10 +282,10 @@ and `suffix' keys."
 	(s-trim (buffer-substring-no-properties start end)))
     nil))
 
-(defun citeproc-orgref--get-proc (bibtex-file)
-  "Return a citeproc processor reading items from BIBTEX-FILE.
-Return the buffer's cached processor if it is available and had
-the same parameters. Create and return a new processor
+(defun citeproc-orgref--get-cleared-proc (bibtex-file)
+  "Return a cleared citeproc processor reading items from BIBTEX-FILE.
+Clear and return the buffer's cached processor if it is available
+and had the same parameters. Create and return a new processor
 otherwise."
   (let ((style-file (or (citeproc-orgref--get-option-val "csl-style")
 			citeproc-orgref-default-style-file
@@ -298,6 +301,7 @@ otherwise."
 	    (setf (citeproc-proc-getter c-proc)
 		  (citeproc-itemgetter-from-bibtex bibtex-file)
 		  (elt citeproc-orgref--proc-cache 1) bibtex-file))
+	  (citeproc-clear c-proc)
 	  (setq result c-proc))))
     (or result
 	(let ((proc (citeproc-create
@@ -553,10 +557,9 @@ Return the list of corresponding rendered citations."
 		  (bibtex-file (org-element-property :path bib-link))
 		  (omit-bib (string= (org-element-property :type bib-link)
 				     "nobibliography"))
-		  (proc (citeproc-orgref--get-proc bibtex-file))
+		  (proc (citeproc-orgref--get-cleared-proc bibtex-file))
 		  ((bl-begin bl-end)
 		   (and bib-link (citeproc-orgref--element-boundaries bib-link))))
-	    (citeproc-proc-clear proc)
 	    (-let* ((link-info
 		     (citeproc-orgref--assemble-link-info
 		      links-and-notes link-count footnote-count
