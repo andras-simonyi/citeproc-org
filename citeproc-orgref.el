@@ -594,6 +594,7 @@ Return the list of corresponding rendered citations."
 
 (defun citeproc-orgref--citelink-content-to-legacy (content)
   "Convert a parsed citelink CONTENT to a legacy one."
+  (message "content: %s" content)
   (let* ((first-item (car (split-string content ";")))
 	 (parsed (citeproc-orgref--parse-locator-affix first-item))
 	 prefix suffix)
@@ -602,7 +603,7 @@ Return the list of corresponding rendered citations."
 	  (concat .prefix .location .suffix)
 	(progn
 	  (setq prefix .prefix
-		suffix (concat .location suffix))
+		suffix (concat .location .suffix))
 	  (if (null suffix) prefix (concat prefix "::" suffix)))))))
 
 (defun citeproc-orgref--citelinks-to-legacy ()
