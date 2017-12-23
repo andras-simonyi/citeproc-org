@@ -44,13 +44,11 @@
 (require 'citeproc)
 (require 'citeproc-itemgetters)
 
-(let* ((package-dir (f-dirname load-file-name))
-       (default-style (f-join package-dir "styles" "chicago-author-date.csl"))
-       (default-locales (f-join package-dir "locales")))
-  (defvar citeproc-orgref-default-style-file default-style
-    "Default CSL style file.")
-  (defvar citeproc-orgref-locales-dir default-locales
-    "Directory of CSL locale files."))
+(defvar citeproc-orgref-default-style-file nil
+  "Default CSL style file.")
+
+(defvar citeproc-orgref-locales-dir nil
+  "Directory of CSL locale files.")
 
 (defvar citeproc-orgref-suppress-affixes-link-types '("citealt")
   "Suppress citation affixes for these cite link types.")
@@ -104,6 +102,14 @@ Always used for LaTeX output.")
   "Cached citeproc processor for citeproc-orgref.
 Its value is either nil or a list of the form
 (PROC STYLE-FILE BIBTEX-FILE LOCALE).")
+
+(let* ((package-dir (f-dirname load-file-name))
+       (fallback-style (f-join package-dir "styles" "chicago-author-date.csl"))
+       (fallback-locales (f-join package-dir "locales")))
+  (defconst citeproc-orgref--fallback-style-file fallback-style
+    "Default CSL style file.")
+  (defconst citeproc-orgref--fallback-locales-dir fallback-locales
+    "Directory of CSL locale files."))
 
 (defconst citeproc-orgref--label-alist
   '(("bk." . "book")
@@ -237,7 +243,8 @@ Return the buffer's cached processor if it is available and had
 the same parameters. Create and return a new processor
 otherwise."
   (let ((style-file (or (citeproc-orgref--get-option-val "csl-style")
-			citeproc-orgref-default-style-file))
+			citeproc-orgref-default-style-file
+			citproc-orgref--fallback-style-file))
 	(locale (or (citeproc-orgref--get-option-val "language") "en"))
 	result)
     (-when-let ((c-proc c-style-file c-bibtex-file c-locale)
@@ -254,7 +261,9 @@ otherwise."
 	(let ((proc (citeproc-create
 		     style-file
 		     (citeproc-itemgetter-from-bibtex bibtex-file)
-		     (citeproc-locale-getter-from-dir citeproc-orgref-locales-dir)
+		     (citeproc-locale-getter-from-dir
+		      (or citeproc-orgref-locales-dir
+			  citeproc-orgref--fallback-locales-dir))
 		     locale)))
 	  (setq citeproc-orgref--proc-cache
 		(list proc style-file bibtex-file locale))
