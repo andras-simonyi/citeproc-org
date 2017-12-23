@@ -244,7 +244,7 @@ the same parameters. Create and return a new processor
 otherwise."
   (let ((style-file (or (citeproc-orgref--get-option-val "csl-style")
 			citeproc-orgref-default-style-file
-			citproc-orgref--fallback-style-file))
+			citeproc-orgref--fallback-style-file))
 	(locale (or (citeproc-orgref--get-option-val "language") "en"))
 	result)
     (-when-let ((c-proc c-style-file c-bibtex-file c-locale)
