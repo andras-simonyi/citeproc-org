@@ -6,7 +6,7 @@ in CSL styles using
 
 ## Requirements and dependencies
 
-`citeproc-orgref` requires Emacs 25.1 or later, and depends on
+`citeproc-orgref` requires Emacs 25.1 or later and depends on
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el), which must be
 installed before installing it.
 
@@ -18,6 +18,12 @@ is to download the latest release as a package from this link, and install it
 using the `package-install-file` Emacs command.
 
 ## Setup
+
+Add the following line to your `.emacs` or  `init.el` file:
+
+```el
+(citeproc-orgref-setup)
+```
 
 ## Usage
 
