@@ -2,21 +2,23 @@
 
 Render [org-ref](https://github.com/jkitchin/org-ref) citations and
 bibliographies in Citation Style Language (CSL) styles using the
-[citeproc-el](https://github.com/andras-simonyi/citeproc-el) library. See
-http://citationstyles.org/ for more information on the CSL project.
+[citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs Lisp library.
+See http://citationstyles.org/ for more information on the CSL project.
+
+Currently `citeproc-orgref` supports only the rendering of BibTeX citations and
+bibliographies — BibLaTeX support is planned.
 
 ## Requirements and dependencies
 
 `citeproc-orgref` requires Emacs 25.1 or later and depends on
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el), which must be
-installed before installing it.
+installed before installing the `citeproc-orgref` package.
 
 ## Installation
 
-Hopefully, `citeproc-orgref` will be available as a [MELPA](https://melpa.org)
-package in the near future but until then the recommended method of installation
-is to download the latest release as a package from this link, and install it
-using the `package-install-file` Emacs command.
+The recommended method of installation is to download the latest release as a
+package from this link, and install it using the `package-install-file` Emacs
+command. 
 
 ## Setup
 
@@ -27,6 +29,26 @@ Add the following line to your `.emacs` or  `init.el` file:
 ```
 
 ## Usage
+
+In its basic use, `citeproc-orgref` simply replaces `org-ref`'s built-in
+citation processing for non-LaTeX org-mode export backends with `citeproc-el`
+and exported `org-ref` citation links are rendered in the default Chicago
+author-date CSL style during export. The handling of citation links during LaTeX
+export does not change, they continue to be rendered with BibTeX.
+
+### Setting the CSL style
+
+The CSL style used for rendering the references can be set by adding a
+
+    #+ CSL-STYLE: /path/to/csl_style_file
+	
+line to the org-mode document. (CSL styles can be downloaded, for instance, from
+the [Zotero Style Repository](https://www.zotero.org/styles).)
+
+### CSL locales
+
+By default, the `en-US` CSL locale file shipped with `citeproc-orgref` is used
+for rendering localized dates and terms in the references. 
 
 ## License
 
