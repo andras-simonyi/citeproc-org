@@ -5,14 +5,14 @@ bibliographies in Citation Style Language (CSL) styles using the
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs Lisp library.
 See http://citationstyles.org/ for more information on the CSL project.
 
-Currently `citeproc-orgref` supports only the rendering of BibTeX citations and
-bibliographies — BibLaTeX support is planned.
+Currently citeproc-orgref supports only the rendering of BibTeX citations and
+bibliographies — Latex support is planned.
 
 ## Requirements and dependencies
 
-`citeproc-orgref` requires Emacs 25.1 or later and depends on
+citeproc-orgref requires Emacs 25.1 or later and depends on
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el), which must be
-installed before installing the `citeproc-orgref` package.
+installed before installing the citeproc-orgref package.
 
 ## Installation
 
@@ -30,11 +30,11 @@ Add the following line to your `.emacs` or  `init.el` file:
 
 ## Usage
 
-In its basic use, `citeproc-orgref` simply replaces `org-ref`'s built-in
-citation processing for non-LaTeX org-mode export backends with `citeproc-el`
-and exported `org-ref` citation links are rendered in the default Chicago
-author-date CSL style during export. The handling of citation links during LaTeX
-export does not change, they continue to be rendered with BibTeX.
+In its basic use, citeproc-orgref simply replaces org-ref’s built-in citation
+rendering for non-LaTeX org-mode export backends with citeproc-el and exported
+org-ref citation links are rendered in the default Chicago author-date CSL style
+during export. The handling of citation links during LaTeX export does not
+change, they continue to be rendered with BibTeX.
 
 ### Setting the CSL style
 
@@ -47,8 +47,18 @@ the [Zotero Style Repository](https://www.zotero.org/styles).)
 
 ### CSL locales
 
-By default, the `en-US` CSL locale file shipped with `citeproc-orgref` is used
-for rendering localized dates and terms in the references. 
+By default, the `en-US` CSL locale file shipped with citeproc-orgref is used for
+rendering localized dates and terms in the references, independently of the
+language settings of org documents. Additional CSL locales can be made available
+by setting the value of the (customizable) `citeproc-orgref-locales-dir`
+variable to a directory containing the locale files in question (locales can be
+found at https://github.com/citation-style-language/locales). 
+
+If `citeproc-orgref-locales-dir` is set and an org-mode document contains a
+language setting corresponding to a locale which is available in the directory
+then citeproc-orgref will automatically try to use that locale for rendering the
+document's references during export (the used locale will also depend on the
+used CSL style's locale information).
 
 ## License
 
@@ -71,7 +81,7 @@ this program. If not, see http://www.gnu.org/licenses/.
 ---
 
 The "Chicago Manual of Style 17th edition (author-date)" CSL style and the
-"en-US" CSL locale distributed with `citeproc-orgref` are both licensed under the
+"en-US" CSL locale distributed with citeproc-orgref are both licensed under the
 [Creative Commons Attribution-ShareAlike 3.0 Unported
 license](http://creativecommons.org/licenses/by-sa/3.0/) and were developed
 within the Citation Style Language project (see http://citationstyles.org). The
