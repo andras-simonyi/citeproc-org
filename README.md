@@ -1,8 +1,8 @@
 # citeproc-orgref
 
 Render [org-ref](https://github.com/jkitchin/org-ref) citations and
-bibliographies in Citation Style Language (CSL) styles using
-[citeproc-el](https://github.com/andras-simonyi/citeproc-el). See
+bibliographies in Citation Style Language (CSL) styles using the
+[citeproc-el](https://github.com/andras-simonyi/citeproc-el) library. See
 http://citationstyles.org/ for more information on the CSL project.
 
 ## Requirements and dependencies
@@ -49,21 +49,10 @@ this program. If not, see http://www.gnu.org/licenses/.
 ---
 
 The "Chicago Manual of Style 17th edition (author-date)" CSL style and the
-"en-US" CSL locale distributed with `citeproc-el` are both licensed under the
+"en-US" CSL locale distributed with `citeproc-orgref` are both licensed under the
 [Creative Commons Attribution-ShareAlike 3.0 Unported
 license](http://creativecommons.org/licenses/by-sa/3.0/) and were developed
 within the Citation Style Language project (see http://citationstyles.org). The
 "Chicago Manual of Style 17th edition (author-date)" CSL style was written by
 Julian Onions with contributions from Sebastian Karcher, Richard Karnesky and
 Andrew Dunning.
-
-
-
-
-
-
-
-
-
-
-
