@@ -6,7 +6,7 @@ bibliographies in Citation Style Language (CSL) styles using the
 See http://citationstyles.org/ for more information on the CSL project.
 
 Currently citeproc-orgref supports only the rendering of BibTeX citations and
-bibliographies — Latex support is planned.
+bibliographies — BibLaTeX support is planned.
 
 ## Requirements and dependencies
 
