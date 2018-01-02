@@ -11,24 +11,21 @@ bibliographies — BibLaTeX support is planned.
 citeproc-orgref is in an early stage of its development and mostly untested, so 
 bugs and rough edges are to be expected.
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [citeproc-orgref](#citeproc-orgref)
-    - [Requirements and dependencies](#requirements-and-dependencies)
-    - [Installation](#installation)
-    - [Setup](#setup)
-    - [Usage](#usage)
-        - [Setting the CSL style](#setting-the-csl-style)
-        - [CSL locales](#csl-locales)
-        - [Using locators and pre/post texts in cite links](#using-locators-and-prepost-texts-in-cite-links)
-        - [Suppressing affixes and author names in citations](#suppressing-affixes-and-author-names-in-citations)
-        - [Output format configuration](#output-format-configuration)
-            - [Ignored export backends](#ignored-export-backends)
-            - [Mapping export backends to citeproc-el formatters](#mapping-export-backends-to-citeproc-el-formatters)
-    - [License](#license)
-
-<!-- markdown-toc end -->
+- [Requirements and dependencies](#requirements-and-dependencies)
+- [Installation](#installation)
+- [Setup](#setup)
+- [Usage](#usage)
+    - [Setting the CSL style](#setting-the-csl-style)
+    - [CSL locales](#csl-locales)
+    - [Using locators and pre/post texts in cite links](#using-locators-and-prepost-texts-in-cite-links)
+    - [Suppressing affixes and author names in citations](#suppressing-affixes-and-author-names-in-citations)
+    - [Output format configuration](#output-format-configuration)
+        - [Ignored export backends](#ignored-export-backends)
+        - [Mapping export backends to citeproc-el formatters](#mapping-export-backends-to-citeproc-el-formatters)
+        - [Bibliography formatting](#bibliography-formatting)
+- [License](#license)
 
 ## Requirements and dependencies
 
