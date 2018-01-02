@@ -52,7 +52,7 @@ citeproc-orgref.
 
 citeproc-orgref provides the Emacs command `citeproc-orgref-setup` to add its
 renderer to `org-export-before-parsing-hook`, which can be used interactively by
-running
+invoking
 
     M-x citeproc-orgref-setup
 
