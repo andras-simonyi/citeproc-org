@@ -157,6 +157,15 @@ separate argument for post text.
 
 ### Suppressing affixes and author names in citations
 
+In certain contexts it might be desirable to suppress the affixes (typically
+brackets) around citations and/or the name(s) of the author(s). With
+citeproc-orgref these effects can be achieved by using a suitable cite link
+type.
+
+The variables `citeproc-orgref-suppress-affixes-cite-link-types` (defaults to
+`("citealt")`) and `citeproc-orgref-suppress-author-cite-link-types` (defaults
+to `("citeyear")`) contain the lists of link types that suppress citation
+affixes and/or author names. Both variables are customizable.
 
 ## License
 
