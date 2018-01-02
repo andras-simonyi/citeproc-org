@@ -5,8 +5,8 @@ bibliographies in Citation Style Language (CSL) styles using the
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs Lisp library.
 See http://citationstyles.org/ for more information on the CSL project.
 
-Currently citeproc-orgref supports only the rendering of BibTeX citations and
-bibliographies — BibLaTeX support is planned.
+Currently citeproc-orgref supports only the rendering of BibTeX bibliographies —
+BibLaTeX support is planned.
 
 citeproc-orgref is in an early stage of its development and mostly untested, so 
 bugs and rough edges are to be expected.
@@ -70,7 +70,7 @@ In its basic use, citeproc-orgref simply replaces org-ref’s built-in citation
 rendering for non-LaTeX org-mode export backends with citeproc-el and exported
 org-ref citation links are rendered in the default Chicago author-date CSL style
 during export. The handling of citation links during LaTeX export does not
-change, they continue to be rendered with BibTeX.
+change, they continue to be rendered with BibTeX/BibLaTeX.
 
 ### Setting the CSL style
 
@@ -174,14 +174,14 @@ affixes and/or author names. Both variables are customizable.
 By default, citeproc-orgref does not render cite links for export backends on
 the (customizable) list `citeproc-orgref-ignore-backends` whose default value is
 `(latex beamer)`. Cite link rendering for these backends is handled by org-ref’s
-default rendering mechanism (which, in the case of the `latex` and `beamer`
-backends uses BibTeX).
+default rendering mechanism (which uses BibTeX/BibLaTeX for the `latex` and
+`beamer` backends).
 
 By changing the value of `citeproc-orgref-ignore-backends` citeproc-orgref can
 be instructed to ignore or take over the rendering for certain backends. Most
 notably, setting its value to `nil` has the effect that references will always
-be rendered with citeproc-el even for LaTeX output, and BibTeX will not be used
-at all.
+be rendered with citeproc-el even for LaTeX output, and BibTeX/BibLaTeX will not
+be used at all.
 
 #### Mapping export backends to citeproc-el formatters
 
