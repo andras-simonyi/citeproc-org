@@ -8,6 +8,25 @@ See http://citationstyles.org/ for more information on the CSL project.
 Currently citeproc-orgref supports only the rendering of BibTeX citations and
 bibliographies — BibLaTeX support is planned.
 
+citeproc-orgref is in an early stage of its development and mostly untested, so 
+bugs and rough edges are to be expected.
+
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [citeproc-orgref](#citeproc-orgref)
+    - [Requirements and dependencies](#requirements-and-dependencies)
+    - [Installation](#installation)
+    - [Setup](#setup)
+    - [Usage](#usage)
+        - [Setting the CSL style](#setting-the-csl-style)
+        - [CSL locales](#csl-locales)
+        - [Using locators and pre/post texts in cite links](#using-locators-and-prepost-texts-in-cite-links)
+        - [Suppressing affixes and author names in citations](#suppressing-affixes-and-author-names-in-citations)
+    - [License](#license)
+
+<!-- markdown-toc end -->
+
 ## Requirements and dependencies
 
 citeproc-orgref requires Emacs 25.1 or later and depends on
@@ -22,7 +41,24 @@ command.
 
 ## Setup
 
-Add the following line to your `.emacs` or  `init.el` file:
+Using citeproc-orgref currently requires adding its main rendering function
+(`citeproc-orgref-render-references`) to org-mode’s
+`org-export-before-parsing-hook`. This makes it incompatible with [org-ref’s own
+citeproc](https://github.com/jkitchin/org-ref/tree/master/citeproc), which also
+uses this hook. Org-ref’s citeproc is not activated by default, but if you have
+added its renderer function, `orcp-citeproc`, to your
+`org-export-before-parsing-hook` then it has to removed before setting up
+citeproc-orgref.
+
+citeproc-orgref provides the Emacs command `citeproc-orgref-setup` to add its
+renderer to `org-export-before-parsing-hook`, which can be used interactively by
+executing
+
+    M-x citeproc-orgref-setup
+
+during an Emacs session. In that case citeproc-orgref will remain active until
+the end of the session. If you want to use it on a permanent basis then add the
+following line to your `.emacs` or `init.el` file:
 
 ```el
 (citeproc-orgref-setup)
@@ -38,7 +74,7 @@ change, they continue to be rendered with BibTeX.
 
 ### Setting the CSL style
 
-The CSL style used for rendering the references can be set by adding a
+The CSL style used for rendering references can be set by adding a
 
     #+ CSL-STYLE: /path/to/csl_style_file
 	
@@ -60,6 +96,68 @@ then citeproc-orgref will automatically try to use that locale for rendering the
 document's references during export (the used locale will also depend on the
 used CSL style's locale information).
 
+### Using locators and pre/post texts in cite links
+
+org-ref supports adding affixes (pre and post text) to references in the
+description field of cite links using the `pre_text::post_text` syntax.
+citeproc-orgref also utilizes cite link descriptions for storing additional
+citation information but changes the syntax to be compatible with how CSL
+represents citations.
+
+The basic syntax, inspired by [pandoc’s citation
+syntax](https://pandoc.org/MANUAL.html#citations), is `pre_text locator,
+post_text`. For example, the cite link 
+
+    [[cite:Tarski-1965][see chapter 1 for an example]] 
+	
+will be rendered as
+
+    (see Tarski 1965, chap. 1 for an example)
+
+in the default CSL style. 
+
+The start of the locator part has to be indicated by a locator term, while the
+end is either the last comma if it is not followed by digits or, in the absence
+of such a comma, the end of the full description. The following locator terms
+are recognized: `bk.`, `bks.`, `book`, `chap.`, `chaps.`, `chapter`, `col.`,
+`cols.`, `column`, `figure`, `fig.`, `figs.`, `folio`, `fol.`, `fols.`,
+`number`, `no.`, `nos.`, `line`, `l.`, `ll.`, `note`, `n.`, `nn.`, `opus`,
+`op.`, `opp.`, `page`, `p.`, `pp.`, `paragraph`, `para.`, `paras.`, `¶`, `¶¶`,
+`§`, `§§`, `part`, `pt.`, `pts.`, `section`, `sec.`, `secs.`, `sub verbo`,
+`s.v.`, `s.vv.`, `verse`, `v.`, `vv.`, `volume`, `vol.`, `vols.`. Similarly to
+pandoc, if no locator term is used but a number is present then “page” is
+assumed.
+
+If there are more cites in a cite link then their associated locators and
+pre/post texts can be specified by using semicolons as separators. For instance,
+the link
+
+    [[cite:Tarski-1965,Gödel-1931][p. 45]]
+	
+renders as
+
+    (Tarski 1965, 45; see also Gödel 1931, 53)
+	
+with the default style.
+
+When an org-mode document is exported to a LaTeX-based format that should not be
+rendered by citeproc-orgref the cite link descriptions (if present) are
+rewritten to a form suitable for org-ref’s LaTeX export. The concrete form
+depends on the value of the (customizable)
+`citeproc-orgref-bibtex-export-use-affixes` variable. If the value is `nil` (the
+default) then the rewritten content will be simply the concatenation of the pre
+text, the locator and the post text (of the first block, if there are more). If
+the value is non-nil then the rewritten content will be `pre_text::locator
+post_text`.
+
+In our experience, setting `citeproc-orgref-bibtex-export-use-affixes` to
+non-nil works well with Natbib styles but causes errors when using the built-in
+LaTeX bibliography styles, because their `\cite` command doesn’t accept a
+separate argument for post text.
+
+### Suppressing affixes and author names in citations
+
+
 ## License
 
 Copyright (C) 2017 András Simonyi
@@ -80,11 +178,11 @@ this program. If not, see http://www.gnu.org/licenses/.
 
 ---
 
-The "Chicago Manual of Style 17th edition (author-date)" CSL style and the
-"en-US" CSL locale distributed with citeproc-orgref are both licensed under the
+The “Chicago Manual of Style 17th edition (author-date)” CSL style and the
+“en-US” CSL locale distributed with citeproc-orgref are both licensed under the
 [Creative Commons Attribution-ShareAlike 3.0 Unported
 license](http://creativecommons.org/licenses/by-sa/3.0/) and were developed
 within the Citation Style Language project (see http://citationstyles.org). The
-"Chicago Manual of Style 17th edition (author-date)" CSL style was written by
+“Chicago Manual of Style 17th edition (author-date)” CSL style was written by
 Julian Onions with contributions from Sebastian Karcher, Richard Karnesky and
 Andrew Dunning.
