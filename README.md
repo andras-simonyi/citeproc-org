@@ -52,13 +52,13 @@ citeproc-orgref.
 
 citeproc-orgref provides the Emacs command `citeproc-orgref-setup` to add its
 renderer to `org-export-before-parsing-hook`, which can be used interactively by
-executing
+running
 
     M-x citeproc-orgref-setup
 
-during an Emacs session. In that case citeproc-orgref will remain active until
-the end of the session. If you want to use it on a permanent basis then add the
-following line to your `.emacs` or `init.el` file:
+during an Emacs session. After the command’s execution citeproc-orgref will
+remain active until the end of the session. If you want to use it on a permanent
+basis then add the following line to your `.emacs` or `init.el` file:
 
 ```el
 (citeproc-orgref-setup)
