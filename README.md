@@ -3,7 +3,7 @@
 Render [org-ref](https://github.com/jkitchin/org-ref) citations and
 bibliographies in Citation Style Language (CSL) styles using the
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs Lisp library.
-See http://citationstyles.org/ for more information on the CSL project.
+(See http://citationstyles.org/ for more information on the CSL project.)
 
 Currently citeproc-orgref supports only the rendering of BibTeX bibliographies —
 BibLaTeX support is planned.
