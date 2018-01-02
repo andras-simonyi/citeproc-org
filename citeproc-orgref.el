@@ -33,12 +33,11 @@
 ;;; Code:
 
 (require 'subr-x)
-(require 'map)
-(require 'f)
-(require 'ox)
-(require 'let-alist)
 (require 'org-element)
 (require 'cl-lib)
+(require 'map)
+(require 'f)
+(require 'let-alist)
 (require 'org-ref)
 
 (require 'citeproc)
