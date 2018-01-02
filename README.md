@@ -23,6 +23,9 @@ bugs and rough edges are to be expected.
         - [CSL locales](#csl-locales)
         - [Using locators and pre/post texts in cite links](#using-locators-and-prepost-texts-in-cite-links)
         - [Suppressing affixes and author names in citations](#suppressing-affixes-and-author-names-in-citations)
+        - [Output format configuration](#output-format-configuration)
+            - [Ignored export backends](#ignored-export-backends)
+            - [Mapping export backends to citeproc-el formatters](#mapping-export-backends-to-citeproc-el-formatters)
     - [License](#license)
 
 <!-- markdown-toc end -->
@@ -166,6 +169,41 @@ The variables `citeproc-orgref-suppress-affixes-cite-link-types` (defaults to
 `("citealt")`) and `citeproc-orgref-suppress-author-cite-link-types` (defaults
 to `("citeyear")`) contain the lists of link types that suppress citation
 affixes and/or author names. Both variables are customizable.
+
+### Output format configuration
+
+#### Ignored export backends
+
+By default, citeproc-orgref does not render cite links for export backends on
+the (customizable) list `citeproc-orgref-ignore-backends` whose default value is
+`(latex beamer)`. Cite link rendering for these backends is handled by org-ref’s
+default rendering mechanism (which, in the case of the `latex` and `beamer`
+backends uses BibTeX).
+
+By changing the value of `citeproc-orgref-ignore-backends` citeproc-orgref can
+be instructed to ignore or take over the rendering for certain backends. Most
+notably, setting its value to `nil` has the effect that references will always
+be rendered with citeproc-el even for LaTeX output, and BibTeX will not be used
+at all.
+
+#### Mapping export backends to citeproc-el formatters
+
+citeproc-orgref uses the `org`, `html` and (optionally) `latex` citeproc-el
+output formatters to render citations and bibliographies when exporting an
+org-mode document. Since the `org` formatter has some limitations (stemming from
+the limitations of the org-mode markup) it is recommended to use the `html` and
+the `latex` formatters for html and LaTeX-based export backends that can handle
+direct HTML or LaTeX output.
+
+The mapping between export backends and output formatters can be configured by
+customizing the `citeproc-orgref-html-backends` and
+`citeproc-orgref-latex-backends` variables — if a backend is in neither of these
+lists then the `org` citeproc-el formatter is used for export.
+
+#### Bibliography formatting
+
+Most of the bibliography formatting parameters (heading, indentation etc.) can
+be configured — see the `Citeproc Orgref` customization group for details.
 
 ## License
 
