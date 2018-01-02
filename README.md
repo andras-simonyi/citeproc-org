@@ -93,8 +93,8 @@ found at https://github.com/citation-style-language/locales).
 If `citeproc-orgref-locales-dir` is set and an org-mode document contains a
 language setting corresponding to a locale which is available in the directory
 then citeproc-orgref will automatically try to use that locale for rendering the
-document's references during export (the used locale will also depend on the
-used CSL style's locale information).
+document’s references during export (the used locale will also depend on the
+used CSL style’s locale information).
 
 ### Using locators and pre/post texts in cite links
 
