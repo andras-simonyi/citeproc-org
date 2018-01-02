@@ -204,7 +204,7 @@ be configured — see the `Citeproc Orgref` customization group for details.
 
 ## License
 
-Copyright (C) 2017 András Simonyi
+Copyright (C) 2018 András Simonyi
 
 Authors: András Simonyi
 
