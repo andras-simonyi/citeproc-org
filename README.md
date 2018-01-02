@@ -132,7 +132,7 @@ If there are more cites in a cite link then their associated locators and
 pre/post texts can be specified by using semicolons as separators. For instance,
 the link
 
-    [[cite:Tarski-1965,Gödel-1931][p. 45]]
+    [[cite:Tarski-1965,Gödel-1931][p. 45;see also p. 53]]
 	
 renders as
 
