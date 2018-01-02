@@ -128,9 +128,9 @@ are recognized: `bk.`, `bks.`, `book`, `chap.`, `chaps.`, `chapter`, `col.`,
 pandoc, if no locator term is used but a number is present then “page” is
 assumed.
 
-If there are more cites in a cite link then their associated locators and
-pre/post texts can be specified by using semicolons as separators. For instance,
-the link
+If there are more than one cites in a cite link then their associated locators
+and pre/post texts can be specified by using semicolons as separators. For
+instance, the link
 
     [[cite:Tarski-1965,Gödel-1931][p. 45;see also p. 53]]
 	
@@ -152,7 +152,7 @@ post_text`.
 
 In our experience, setting `citeproc-orgref-bibtex-export-use-affixes` to
 non-nil works well with Natbib styles but causes errors when using the built-in
-LaTeX bibliography styles, because their `\cite` command doesn’t accept a
+LaTeX bibliography styles because their `\cite` command doesn’t accept a
 separate argument for post text.
 
 ### Suppressing affixes and author names in citations
