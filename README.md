@@ -86,9 +86,9 @@ the [Zotero Style Repository](https://www.zotero.org/styles).)
 By default, the `en-US` CSL locale file shipped with citeproc-orgref is used for
 rendering localized dates and terms in the references, independently of the
 language settings of org documents. Additional CSL locales can be made available
-by setting the value of the (customizable) `citeproc-orgref-locales-dir`
-variable to a directory containing the locale files in question (locales can be
-found at https://github.com/citation-style-language/locales). 
+by setting the value of the `citeproc-orgref-locales-dir` variable to a
+directory containing the locale files in question (locales can be found at
+https://github.com/citation-style-language/locales).
 
 If `citeproc-orgref-locales-dir` is set and an org-mode document contains a
 language setting corresponding to a locale which is available in the directory
@@ -143,12 +143,11 @@ with the default style.
 When an org-mode document is exported to a LaTeX-based format that should not be
 rendered by citeproc-orgref the cite link descriptions (if present) are
 rewritten to a form suitable for org-ref’s LaTeX export. The concrete form
-depends on the value of the (customizable)
-`citeproc-orgref-bibtex-export-use-affixes` variable. If the value is `nil` (the
-default) then the rewritten content will be simply the concatenation of the pre
-text, the locator and the post text (of the first block, if there are more). If
-the value is non-nil then the rewritten content will be `pre_text::locator
-post_text`.
+depends on the value of the `citeproc-orgref-bibtex-export-use-affixes`
+variable. If the value is `nil` (the default) then the rewritten content will be
+simply the concatenation of the pre text, the locator and the post text (of the
+first block, if there are more). If the value is non-nil then the rewritten
+content will be `pre_text::locator post_text`.
 
 In our experience, setting `citeproc-orgref-bibtex-export-use-affixes` to
 non-nil works well with Natbib styles but causes errors when using the built-in
@@ -165,17 +164,17 @@ type.
 The variables `citeproc-orgref-suppress-affixes-cite-link-types` (defaults to
 `("citealt")`) and `citeproc-orgref-suppress-author-cite-link-types` (defaults
 to `("citeyear")`) contain the lists of link types that suppress citation
-affixes and/or author names. Both variables are customizable.
+affixes and/or author names.
 
 ### Output format configuration
 
 #### Ignored export backends
 
 By default, citeproc-orgref does not render cite links for export backends on
-the (customizable) list `citeproc-orgref-ignore-backends` whose default value is
-`(latex beamer)`. Cite link rendering for these backends is handled by org-ref’s
-default rendering mechanism (which uses BibTeX/BibLaTeX for the `latex` and
-`beamer` backends).
+the list `citeproc-orgref-ignore-backends` whose default value is `(latex
+beamer)`. Cite link rendering for these backends is handled by org-ref’s default
+rendering mechanism (which uses BibTeX/BibLaTeX for the `latex` and `beamer`
+backends).
 
 By changing the value of `citeproc-orgref-ignore-backends` citeproc-orgref can
 be instructed to ignore or take over the rendering for certain backends. Most
