@@ -188,7 +188,7 @@ citeproc-orgref uses the `org`, `html` and (optionally) `latex` citeproc-el
 output formatters to render citations and bibliographies when exporting an
 org-mode document. Since the `org` formatter has some limitations (stemming from
 the limitations of the org-mode markup) it is recommended to use the `html` and
-the `latex` formatters for html and LaTeX-based export backends that can handle
+the `latex` formatters for HTML and LaTeX-based export backends that can handle
 direct HTML or LaTeX output.
 
 The mapping between export backends and output formatters can be configured by
