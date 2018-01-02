@@ -170,11 +170,10 @@ affixes and/or author names.
 
 #### Ignored export backends
 
-By default, citeproc-orgref does not render cite links for export backends on
-the list `citeproc-orgref-ignore-backends` whose default value is `(latex
-beamer)`. Cite link rendering for these backends is handled by org-ref’s default
-rendering mechanism (which uses BibTeX/BibLaTeX for the `latex` and `beamer`
-backends).
+citeproc-orgref does not render cite links for export backends on the list
+`citeproc-orgref-ignore-backends` (the default value is `(latex beamer)`). Cite
+link rendering for these backends is handled by org-ref’s default rendering
+mechanism (which uses BibTeX/BibLaTeX for the `latex` and `beamer` backends).
 
 By changing the value of `citeproc-orgref-ignore-backends` citeproc-orgref can
 be instructed to ignore or take over the rendering for certain backends. Most
