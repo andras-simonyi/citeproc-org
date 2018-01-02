@@ -82,8 +82,8 @@ If nil then only the fallback en-US locale will be available."
   :type '(repeat :tag "List of citation link types" string)
   :group 'citeproc-orgref)
 
-(defcustom citeproc-orgref-suppress-first-author-cite-link-types '("citeyear")
-  "Suppress first author for these cite link types."
+(defcustom citeproc-orgref-suppress-author-cite-link-types '("citeyear")
+  "Suppress author for these cite link types."
   :type '(repeat :tag "List of citation link types" string)
   :group 'citeproc-orgref)
 
@@ -439,7 +439,7 @@ is not in a footnote."
 			    cites-rest))))
 		  (-zip cites-ids cites-rest-filled))
 	      (mapcar #'list cites-ids))))
-       (if (member type citeproc-orgref-suppress-first-author-cite-link-types)
+       (if (member type citeproc-orgref-suppress-author-cite-link-types)
 	   (cons (cons '(suppress-author . t) (car cites)) (cdr cites))
 	 cites))
      :capitalize-first (and capitalize-outside-fn
