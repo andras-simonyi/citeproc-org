@@ -12,7 +12,7 @@
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
 ;; URL: https://github.com/andras-simonyi/citeproc-orgref
 ;; Keywords: bib
-;; Package-Requires: ((emacs "25.1") (org-ref "1.1.1") (citeproc "0.1") (f "0.18.0"))
+;; Package-Requires: ((emacs "25.1") (f "0.18.0") (org "9.0") (citeproc "0.1") (org-ref "1.1.1"))
 ;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,7 @@
 ;;; Code:
 
 (require 'subr-x)
+(require 'org)
 (require 'org-element)
 (require 'cl-lib)
 (require 'map)
