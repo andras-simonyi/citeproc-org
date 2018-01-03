@@ -29,9 +29,10 @@ bugs and rough edges are to be expected.
 
 ## Requirements and dependencies
 
-citeproc-orgref requires Emacs 25.1 or later compiled with libxml2 support and
-depends on [citeproc-el](https://github.com/andras-simonyi/citeproc-el), which
-must be installed before installing the citeproc-orgref package.
+citeproc-orgref requires Emacs 25.1 or later compiled with libxml2 support,
+Org-mode 9.0 or later and depends on
+[citeproc-el](https://github.com/andras-simonyi/citeproc-el), which must be
+installed before installing the citeproc-orgref package.
 
 ## Installation
 
