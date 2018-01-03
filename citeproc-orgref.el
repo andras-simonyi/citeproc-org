@@ -13,7 +13,7 @@
 ;; URL: https://github.com/andras-simonyi/citeproc-orgref
 ;; Keywords: bib
 ;; Package-Requires: ((emacs "25.1") (f "0.18.0") (org "9.0") (citeproc "0.1") (org-ref "1.1.1"))
-;; Version: 0.1
+;; Version: 0.1.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
