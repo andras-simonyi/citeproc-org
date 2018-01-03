@@ -36,9 +36,9 @@ installed before installing the citeproc-orgref package.
 
 ## Installation
 
-The recommended method of installation is to download the latest release as a
-package from this link, and install it using the `package-install-file` Emacs
-command. 
+The recommended method of installation is to download the [latest release as a
+package](https://github.com/andras-simonyi/citeproc-orgref/releases/download/0.1.0/citeproc-orgref-0.1.0.tar)
+and install it using the `package-install-file` Emacs command.
 
 ## Setup
 
