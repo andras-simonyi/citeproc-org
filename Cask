@@ -1,5 +1,6 @@
 (source gnu)
 (source melpa)
+(source org)
 
 (package-file "citeproc-orgref.el")
 
