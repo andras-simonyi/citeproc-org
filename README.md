@@ -208,7 +208,7 @@ be configured — see the `Citeproc Orgref` customization group for details.
 
 Thanks to John Kitchin and his co-developers for creating the excellent org-ref
 package. citeproc-orgref was inspired by and borrows some concrete
-implementation ideas from John Kitchin's org-ref citation processor.
+implementation ideas from John Kitchin’s org-ref citation processor.
 
 ## License
 
