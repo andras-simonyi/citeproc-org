@@ -12,7 +12,7 @@
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
 ;; URL: https://github.com/andras-simonyi/citeproc-orgref
 ;; Keywords: org-ref, org-mode, cite, bib
-;; Package-Requires: ((emacs "25.1") (org "9") (f "0.18.0") (citeproc "0.1") (org-ref "1.1.1"))
+;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (org "9") (f "0.18.0") (citeproc "0.1") (org-ref "1.1.1"))
 ;; Version: 0.1.0
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -36,6 +36,7 @@
 (require 'org)
 (require 'org-element)
 (require 'cl-lib)
+(require 'dash)
 (require 'map)
 (require 'f)
 (require 'let-alist)
