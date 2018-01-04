@@ -1,4 +1,5 @@
 # citeproc-orgref
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Render [org-ref](https://github.com/jkitchin/org-ref) citations and
 bibliographies in Citation Style Language (CSL) styles using the
