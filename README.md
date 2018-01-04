@@ -26,6 +26,7 @@ bugs and rough edges are to be expected.
         - [Ignored export backends](#ignored-export-backends)
         - [Mapping export backends to citeproc-el formatters](#mapping-export-backends-to-citeproc-el-formatters)
         - [Bibliography formatting](#bibliography-formatting)
+- [Credits](#credits)
 - [License](#license)
 
 ## Requirements and dependencies
