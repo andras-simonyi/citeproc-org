@@ -91,7 +91,8 @@ rendering localized dates and terms in the references, independently of the
 language settings of org documents. Additional CSL locales can be made available
 by setting the value of the `citeproc-orgref-locales-dir` variable to a
 directory containing the locale files in question (locales can be found at
-https://github.com/citation-style-language/locales).
+https://github.com/citation-style-language/locales). The directory must contain
+at least the `en-US` CSL locale.
 
 If `citeproc-orgref-locales-dir` is set and an org-mode document contains a
 language setting corresponding to a locale which is available in the directory
