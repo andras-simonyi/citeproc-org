@@ -112,7 +112,7 @@ The basic syntax, inspired by [pandoc’s citation
 syntax](https://pandoc.org/MANUAL.html#citations), is `pre_text locator,
 post_text`. For example, the cite link 
 
-    [[cite:Tarski-1965][see chapter 1 for an example]] 
+    [[cite:Tarski-1965][see chapter 1, for an example]] 
 	
 will be rendered as
 
