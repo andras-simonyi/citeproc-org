@@ -6,8 +6,8 @@ bibliographies in Citation Style Language (CSL) styles using the
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs Lisp library.
 (See http://citationstyles.org/ for more information on the CSL project.)
 
-Currently citeproc-orgref supports only the rendering of BibTeX bibliographies —
-BibLaTeX support is planned.
+Currently citeproc-orgref supports only the rendering of BibTeX
+bibliographies—BibLaTeX support is planned.
 
 citeproc-orgref is in an early stage of its development and mostly untested, so 
 bugs and rough edges are to be expected.
@@ -197,13 +197,13 @@ direct HTML or LaTeX output.
 
 The mapping between export backends and output formatters can be configured by
 customizing the `citeproc-orgref-html-backends` and
-`citeproc-orgref-latex-backends` variables — if a backend is in neither of these
+`citeproc-orgref-latex-backends` variables—if a backend is in neither of these
 lists then the `org` citeproc-el formatter is used for export.
 
 #### Bibliography formatting
 
 Most of the bibliography formatting parameters (heading, indentation etc.) can
-be configured — see the `Citeproc Orgref` customization group for details.
+be configured—see the `Citeproc Orgref` customization group for details.
 
 ## Credits
 
