@@ -410,7 +410,7 @@ treat all links as footnotes (usde for note CSL styles)."
   "Return a citeproc citation corresponding to an org cite LINK.
 FOOTNOTE-NO is nil if LINK is not in a footnote or the number of
 the link's footnote. If NEW-FN is non-nil the the link was not in
-a footnote biIf CAPITALIZE-OUTSIDE-FN is non-nil then set the
+a footnote. If CAPITALIZE-OUTSIDE-FN is non-nil then set the
 `capitalize-first' slot of the citation struct to t when the link
 is not in a footnote."
   (let* ((type (org-element-property :type link))
