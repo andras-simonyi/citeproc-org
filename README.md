@@ -79,7 +79,7 @@ change, they continue to be rendered with BibTeX/BibLaTeX.
 
 The CSL style used for rendering references can be set by adding a
 
-    #+ CSL-STYLE: /path/to/csl_style_file
+    #+CSL-STYLE: /path/to/csl_style_file
 	
 line to the org-mode document. (CSL styles can be downloaded, for instance, from
 the [Zotero Style Repository](https://www.zotero.org/styles).)
