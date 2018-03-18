@@ -229,7 +229,7 @@ which would be rendered as
 
 in the default style.
 
-Long form citations, in contrast, have a far more elaborate syntax which
+Long form citations, in contrast, have a far more elaborate syntax, which
 supports multiple cites and pre/post texts:
 
 	[cite:common_pre_text;pre_text1 @itemid1 post_text1;...;pre_text_n @itemid_n post_text_n;common_post_text]
