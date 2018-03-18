@@ -3,11 +3,6 @@
 ;; Copyright (C) 2017 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
-;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
-;; URL: https://github.com/andras-simonyi/citeproc-org
-;; Keywords: bib
-;; Package-Requires: ((emacs "25.1") (org-ref "1.1.1") (citeproc "0.1"))
-;; Version: 0.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
