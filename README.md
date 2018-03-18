@@ -23,7 +23,7 @@ bugs and rough edges are to be expected.
 	- [Org-ref citations](#org-ref-citations)
         - [Locators and pre/post texts in cite links](#locators-and-prepost-texts-in-cite-links)
         - [Suppressing affixes and author names in citations](#suppressing-affixes-and-author-names-in-citations)
-    - [Org-mode citations using the “wip-cite” syntax](#org-mode-citations-using-the-wip-cite-syntax)
+    - [Org-mode citations and bibliography using the “wip-cite” syntax](#org-mode-citations-and-bibliography-using-the-wip-cite-syntax)
 	    - [Bibliography file and placement](#bibliography-file-and-placement)
  		- [Citations](#citations)
         - [Locators](#locators)
