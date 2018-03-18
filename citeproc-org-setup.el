@@ -1,10 +1,10 @@
-;;; citeproc-orgref-setup.el --- Set up citeproc-orgref -*- lexical-binding: t; -*-
+;;; citeproc-org-setup.el --- Set up citeproc-org -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
-;; URL: https://github.com/andras-simonyi/citeproc-orgref
+;; URL: https://github.com/andras-simonyi/citeproc-org
 ;; Keywords: bib
 ;; Package-Requires: ((emacs "25.1") (org-ref "1.1.1") (citeproc "0.1"))
 ;; Version: 0.1
@@ -26,15 +26,15 @@
 
 ;;; Commentary:
 
-;; Function to set up citeproc-orgref. It is in a separate file to avoid loading
+;; Function to set up citeproc-org. It is in a separate file to avoid loading
 ;; the whole program and citeproc-el in the setup phase.
 
 ;;; Code:
 
 ;;;###autoload
-(defun citeproc-orgref-setup ()
-  "Add citeproc-orgref rendering to the `org-export-before-parsing-hook' hook."
+(defun citeproc-org-setup ()
+  "Add citeproc-org rendering to the `org-export-before-parsing-hook' hook."
   (interactive)
-  (add-hook 'org-export-before-parsing-hook 'citeproc-orgref-render-references))
+  (add-hook 'org-export-before-parsing-hook 'citeproc-org-render-references))
 
-;;; citeproc-orgref-setup ends here 
+;;; citeproc-org-setup ends here 
