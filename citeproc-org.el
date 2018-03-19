@@ -64,7 +64,7 @@ If nil then only the fallback en-US locale will be available."
   :group 'citeproc-org)
 
 (defcustom citeproc-org-html-bib-header
-  "<h2 class='citeproc-org-bib-h2'>Bibliography</h1>\n"
+  "<h2 class='citeproc-org-bib-h2'>Bibliography</h2>\n"
   "HTML bibliography header to use for html export."
   :type 'string
   :group 'citeproc-org)
