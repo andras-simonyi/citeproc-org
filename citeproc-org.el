@@ -473,9 +473,8 @@ the n-th cite occurring in the footnote."
   (let* ((elt-types (list 'footnote-reference mode))
 	 (elts (org-element-map parsed-buffer elt-types
 		 (lambda (x)
-		   (when (or (member (org-element-property :type x)
-				     org-ref-cite-types)
-			     (eq 'citation (org-element-type x)))
+		   (when (or (memq (org-element-type x) '(footnote-reference citation))
+			     (member (org-element-property :type x) org-ref-cite-types))
 		     x))))
 	 cite-elts cites-and-notes
 	 (act-cite-no 0)
