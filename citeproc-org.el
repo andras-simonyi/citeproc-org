@@ -145,7 +145,7 @@ Always used for LaTeX output."
 (defvar citeproc-org--proc-cache nil
   "Cached citeproc processor for citeproc-org.
 Its value is either nil or a list of the form
-(PROC STYLE-FILE BIBTEX-FILE LOCALE).")
+\(PROC STYLE-FILE BIBTEX-FILE LOCALE).")
 
 (defconst citeproc-org--load-dir (f-dirname load-file-name)
   "The dir from which this file was loaded.")
