@@ -1,12 +1,12 @@
 ;;; citeproc-org.el --- Render org-mode references in CSL styles -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017 András Simonyi
+;; Copyright (C) 2018 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
 ;; URL: https://github.com/andras-simonyi/citeproc-org
 ;; Keywords: org-ref, org-mode, cite, bib
-;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (org "9") (f "0.18.0") (citeproc "0.1") (org-ref "1.1.1"))
+;; Package-Requires: ((emacs "25.1") (dash "2.12.0") (org "9") (f "0.18.0") (citeproc "0.1") (org-ref "1.1.1"))
 ;; Version: 0.2.0
 
 ;; This program is free software; you can redistribute it and/or modify
