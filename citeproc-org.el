@@ -48,8 +48,8 @@
 
 (defgroup citeproc-org nil
   "Customization group for citeproc-org."
-  :tag "Citeproc Orgref"
-  :group 'org-ref)
+  :tag "Citeproc Org"
+  :group 'org)
 
 (defcustom citeproc-org-default-style-file nil
   "Default CSL style file.
