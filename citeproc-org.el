@@ -47,8 +47,8 @@
 (require 'citeproc-itemgetters)
 
 (defgroup citeproc-org nil
-  "Customization group for citeproc-org."
-  :tag "Citeproc Org"
+  "Settings for rendering org-mode citations in CSL styles."
+  :tag "Org Citeproc"
   :group 'org)
 
 (defcustom citeproc-org-default-style-file nil
