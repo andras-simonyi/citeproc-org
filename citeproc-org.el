@@ -48,7 +48,7 @@
 
 (defgroup citeproc-org nil
   "Settings for rendering org-mode citations in CSL styles."
-  :tag "Org Citeproc"
+  :tag "Citeproc Org"
   :group 'org)
 
 (defcustom citeproc-org-default-style-file nil
