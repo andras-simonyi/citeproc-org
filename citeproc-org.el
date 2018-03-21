@@ -65,7 +65,7 @@ If nil then only the fallback en-US locale will be available."
 
 (defcustom citeproc-org-html-bib-header
   "<h2 class='citeproc-org-bib-h2'>Bibliography</h2>\n"
-  "HTML bibliography header to use for html export."
+  "HTML bibliography header to use for HTML export."
   :type 'string
   :group 'citeproc-org)
 
@@ -75,7 +75,7 @@ If nil then only the fallback en-US locale will be available."
   :group 'citeproc-org)
 
 (defcustom citeproc-org-org-bib-header "* Bibliography\n"
-  "Org bibliography header to use for non-html and non-LaTeX export."
+  "Org bibliography header to use for non-HTML and non-LaTeX export."
   :type 'string
   :group 'citeproc-org)
 
@@ -103,7 +103,7 @@ separate arguments."
   :group 'citeproc-org)
 
 (defcustom citeproc-org-html-backends '(html twbs)
-  "Use the html formatter for these org export backends."
+  "Use the HTML formatter for these org export backends."
   :type '(repeat symbol)
   :group 'citeproc-org)
 
@@ -123,7 +123,7 @@ separate arguments."
   :group 'citeproc-org)
 
 (defcustom citeproc-org-html-hanging-indent "1.5em"
-  "The size of hanging-indent for html ouput in valid CSS units.
+  "The size of hanging-indent for HTML ouput in valid CSS units.
 Used only when hanging-indent is activated by the used CSL
 style."
   :type 'string
@@ -415,7 +415,7 @@ otherwise."
 	  proc))))
 
 (defun citeproc-org--format-html-bib (bib parameters)
-  "Format html bibliography BIB using formatting PARAMETERS."
+  "Format HTML bibliography BIB using formatting PARAMETERS."
   (let* ((char-width (car (s-match "[[:digit:].]+"
 				   citeproc-org-html-label-width-per-char)))
 	 (char-width-unit (substring citeproc-org-html-label-width-per-char
