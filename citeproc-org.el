@@ -44,7 +44,6 @@
 (require 'org-ref)
 
 (require 'citeproc)
-(require 'citeproc-itemgetters)
 
 (defgroup citeproc-org nil
   "Settings for rendering org-mode citations in CSL styles."
