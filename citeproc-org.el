@@ -659,8 +659,9 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
   (interactive)
   (let ((links (org-element-map (org-element-parse-buffer) 'link
 		 (lambda (x)
-		   (when (member (org-element-property :type x)
-				 org-ref-cite-types)
+		   (when (and (member (org-element-property :type x)
+				      org-ref-cite-types)
+			      (org-element-property :contents-begin x))
 		     x))))
 	(offset 0))
     (dolist (link links)
