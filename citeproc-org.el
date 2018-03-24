@@ -7,7 +7,7 @@
 ;; URL: https://github.com/andras-simonyi/citeproc-org
 ;; Keywords: org-ref, org-mode, cite, bib
 ;; Package-Requires: ((emacs "25.1") (dash "2.12.0") (org "9") (f "0.18.0") (citeproc "0.1") (org-ref "1.1.1"))
-;; Version: 0.2.0
+;; Version: 0.2.1
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
