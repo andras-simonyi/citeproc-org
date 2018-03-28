@@ -69,7 +69,7 @@ If nil then only the fallback en-US locale will be available."
   :group 'citeproc-org)
 
 (defcustom citeproc-org-latex-bib-header "\\section*{Bibliography}\n\n"
-  "HTML bibliography header to use for LaTeX export."
+  "LaTeX bibliography header to use for LaTeX export."
   :type 'string
   :group 'citeproc-org)
 
