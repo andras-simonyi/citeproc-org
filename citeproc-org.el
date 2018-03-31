@@ -230,8 +230,12 @@ considered when calculating END."
 	(post-blank (org-element-property :post-blank element)))
     (list begin (- end post-blank))))
 
-(defun citeproc-org--in-fn-p (elt)
-  "Return whether org element ELT is in a footnote."
+(defun citeproc-org--fn-pos (elt)
+  "Return info about the footnote position of org element ELT.
+The returned value is
+- nil if ELT is not in a footnote,
+- t if ELT is in an unlabelled footnote
+- and the footnote label if it is in a labelled footnote."
   (let ((curr (org-element-property :parent elt))
 	result)
     (while (and curr (not result))
@@ -488,18 +492,18 @@ the n-th cite occurring in the footnote."
 		  cites-and-notes))
 	(push elt cite-elts)
 	(cl-incf cite-count)
-	(let ((fn-label (citeproc-org--in-fn-p elt))
+	(let ((fn-pos (citeproc-org--fn-pos elt))
 	      ;; cites as ('cite <cite-idx> cite)
 	      (indexed (list 'cite act-cite-no elt)))
 	  (cl-incf act-cite-no)
-	  (pcase fn-label
+	  (pcase fn-pos
 	    ;; not in footnote
 	    ((\` nil) (push indexed cites-and-notes))
 	    ;; unlabelled, in the last footnote
 	    ('t (push indexed (cddr (car cites-and-notes))))
 	    ;; labelled footnote
 	    (_ (let ((fn-with-label (--first (and (eq (car it) 'footnote)
-						  (string= fn-label
+						  (string= fn-pos
 							   (cadr it)))
 					     cites-and-notes)))
 		 (if fn-with-label
@@ -507,7 +511,7 @@ the n-th cite occurring in the footnote."
 			   (cons indexed (cddr fn-with-label)))
 		   (error
 		    "No footnote reference before footnote definition with label %s"
-		    fn-label))))))))
+		    fn-pos))))))))
     (list (nreverse cite-elts) cites-and-notes cite-count footnotes-count)))
 
 (defun citeproc-org--assemble-cite-info
