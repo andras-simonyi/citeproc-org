@@ -276,15 +276,14 @@ and `suffix' keys."
 		  (setq loc-start (caar digit-matches)
 			loc-end (cdr (-last-item digit-matches))
 			label "page")
-		(progn
-		  (setq label-exp (substring s (caar label-matches) (cdar label-matches))
-			label (assoc-default label-exp citeproc-org--label-alist))
-		  (if (null digit-matches)
+		(setq label-exp (substring s (caar label-matches) (cdar label-matches))
+		      label (assoc-default label-exp citeproc-org--label-alist))
+		(if (null digit-matches)
 		      (setq loc-start (caar label-matches)
 			    loc-end (cdr (-last-item label-matches)))
 		    (setq loc-start (min (caar label-matches) (caar digit-matches))
 			  loc-end (max (cdr (-last-item label-matches))
-				       (cdr (-last-item digit-matches)))))))
+				       (cdr (-last-item digit-matches))))))
 	      (when (> loc-start 0) (setq prefix (substring s 0 loc-start)))
 	      (if (and last-comma-pos (> last-comma-pos loc-end))
 		  (setq suffix (substring s last-comma-pos)
@@ -398,13 +397,12 @@ otherwise."
 		citeproc-org--proc-cache)
       (when (and (string= style-file c-style-file)
 		 (string= locale c-locale))
-	(progn
-	  (unless (string= bibtex-file c-bibtex-file)
-	    (setf (citeproc-proc-getter c-proc)
-		  (citeproc-itemgetter-from-bibtex bibtex-file)
-		  (elt citeproc-org--proc-cache 1) bibtex-file))
-	  (citeproc-clear c-proc)
-	  (setq result c-proc))))
+	(unless (string= bibtex-file c-bibtex-file)
+	  (setf (citeproc-proc-getter c-proc)
+		(citeproc-itemgetter-from-bibtex bibtex-file)
+		(elt citeproc-org--proc-cache 1) bibtex-file))
+	(citeproc-clear c-proc)
+	(setq result c-proc)))
     (or result
 	(let ((proc (citeproc-create
 		     style-file
@@ -671,10 +669,9 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
     (let-alist parsed
       (if (not citeproc-org-bibtex-export-use-affixes)
 	  (concat .prefix .location .suffix)
-	(progn
-	  (setq prefix .prefix
-		suffix (concat .location .suffix))
-	  (if (null suffix) prefix (concat prefix "::" suffix)))))))
+	(setq prefix .prefix
+	      suffix (concat .location .suffix))
+	(if (null suffix) prefix (concat prefix "::" suffix))))))
 
 (defun citeproc-org--citelinks-to-legacy ()
   "Replace cite link contents with their legacy `org-ref' versions."
