@@ -606,36 +606,54 @@ Return `link' `citation' or nil if there are no citations."
 Returns a (BIB-FILE BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
   (let ((bib-link
 	 (org-element-map parsed-buffer 'link
-	   (lambda (x) (when (member (org-element-property :type x)
-				     '("bibliography" "nobibliography"))
-			 x))
-	   nil t)))
+	   (lambda (x)
+	     (when (member (org-element-property :type x)
+			   '("bibliography" "nobibliography"))
+	       x))
+	   nil t))
+	bib-file bib-elt-begin bib-elt-end print-bib)
     (if bib-link
-	`(,(org-element-property :path bib-link)
-	  ,@(citeproc-org--element-boundaries bib-link)
-	  ,(string= (org-element-property :type bib-link) "bibliography"))
-      (error "No bibliography link in the document"))))
+	(-let ((path (org-element-property :path bib-link))
+	       (type (org-element-property :type bib-link))
+	       ((begin end) (citeproc-org--element-boundaries bib-link)))
+	  (setq bib-elt-begin begin
+		bib-elt-end end)
+	  (when (string= type "bibliography")
+	    (setq print-bib t))
+	  (unless (string= path "here")
+	    (setq bib-file path)))
+      (setq print-bib t)
+      (unless (string= (buffer-substring (1- (point-max)) (point-max)) "\n")
+	(goto-char (point-max))
+	(insert "\n"))
+      (setq bib-elt-begin (point-max)
+	    bib-elt-end (point-max)))
+    (unless bib-file
+      (if (and (boundp 'org-ref-default-bibliography)
+	       org-ref-default-bibliography)
+	  (setq bib-file (car org-ref-default-bibliography))
+	(error "No bibliography file was specified")))
+    (list bib-file bib-elt-begin bib-elt-end print-bib)))
 
 (defun citeproc-org--get-keyword-bib-info (parsed-buffer)
   "Return keyword-based bibliography information from PARSED-BUFFER.
 Returns a (BIB-FILE BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
-  (let ((bib-file (citeproc-org--get-option-val "bibliography")))
-    (if (f-exists-p bib-file)
-	(let ((bib-place
-	       (org-element-map parsed-buffer 'keyword
-		 (lambda (x)
-		   (when (and (eq 'keyword (org-element-type x))
-			      (string= (org-element-property :key x)
-				       "BIBLIOGRAPHY")
-			      (string= (org-element-property :value x)
-				       "here"))
-		     x))
-		 nil t)))
-	  `(,bib-file
-	    ,@(if bib-place (citeproc-org--element-boundaries bib-place)
-		(list nil nil))
-	    ,(not (not bib-place))))
-      (error "No valid bibliography was specified"))))
+  (-if-let (bib-file (citeproc-org--get-option-val "bibliography"))
+      (let ((bib-place
+	     (org-element-map parsed-buffer 'keyword
+	       (lambda (x)
+		 (when (and (eq 'keyword (org-element-type x))
+			    (string= (org-element-property :key x)
+				     "BIBLIOGRAPHY")
+			    (string= (org-element-property :value x)
+				     "here"))
+		   x))
+	       nil t)))
+	`(,bib-file
+	  ,@(if bib-place (citeproc-org--element-boundaries bib-place)
+	      (list nil nil))
+	  ,(not (not bib-place))))
+    (error "No bibliography file was specified")))
 
 (defun citeproc-org--get-bib-info (parsed-buffer mode)
   "Return bibliography information from PARSED-BUFFER for MODE.
