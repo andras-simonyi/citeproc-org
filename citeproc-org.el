@@ -703,7 +703,6 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 ;;;###autoload
 (defun citeproc-org-render-references (backend)
   "Render cites and bibliography for export with BACKEND."
-  (interactive)
   (if (not (memq backend citeproc-org-ignore-backends))
       (let* ((parsed-buffer (org-element-parse-buffer))
 	     (mode (citeproc-org--determine-mode parsed-buffer)))
