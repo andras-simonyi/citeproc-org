@@ -196,7 +196,7 @@ affixes and/or author names.
 
 ### Org-mode citations and bibliography using the “wip-cite” syntax
 
-Currently only the the `wip-cite` development branch of org-mode supports this
+Currently only the the `wip-cite` development branch of Org supports this
 citaton syntax.
 
 #### Bibliography file and placement
