@@ -1,7 +1,7 @@
 # citeproc-org
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Render [org-mode](https://orgmode.org/) citations and
+Render [Org-mode](https://orgmode.org/) citations and
 bibliographies in Citation Style Language (CSL) styles using the
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs Lisp library.
 (See http://citationstyles.org/ for more information on the CSL project.)
@@ -41,9 +41,8 @@ Org-mode 9.0 or later and depends on
 [citeproc-el](https://github.com/andras-simonyi/citeproc-el), which must be
 installed before installing the citeproc-org package. Rendering
 [org-ref](https://github.com/jkitchin/org-ref) citation links requires org-ref,
-while rendering cites in the org-mode citation syntax requires an org-mode
-version that supports the syntax implemented by the `wip-cite` org-mode
-development branch.
+while rendering cites in the Org citation syntax requires an Org version that
+supports the syntax implemented by the `wip-cite` org-mode development branch.
 
 ## Installation
 
@@ -78,7 +77,7 @@ basis then add the following line to your `.emacs` or `init.el` file:
 
 ## Usage
 
-citeproc-org supports two different org-mode citation syntaxes:
+citeproc-org supports two different Org citation syntaxes:
 [org-ref](https://github.com/jkitchin/org-ref) citation links and,
 experimentally, the citation syntax used by the `wip-cite` development branch of
 org-mode. During the export process citeproc-org detects which type of citations
@@ -86,7 +85,7 @@ are present in the document and automatically uses the corresponding citation
 parser. The two citation styles cannot be mixed.
 
 In its basic use, citeproc-org overtakes citation rendering for non-LaTeX
-org-mode export backends and exported org-mode citations are rendered in the
+Org-mode export backends and exported org-mode citations are rendered in the
 default Chicago author-date CSL style during export. The handling of citations
 for LaTeX-based export backends does not change (but see [Ignored export
 backends](#ignored-export-backends) for ways of changing this behaviour).
@@ -97,7 +96,7 @@ The CSL style used for rendering references can be set by adding a
 
     #+CSL_STYLE: /path/to/csl_style_file
 	
-line to the org-mode document. (CSL styles can be downloaded, for instance, from
+line to the Org-mode document. (CSL styles can be downloaded, for instance, from
 the [Zotero Style Repository](https://www.zotero.org/styles).) Dependent styles
 (which are not “unique” styles in the terminology of the Zotero Style
 Repository) are not supported.
@@ -106,7 +105,7 @@ Repository) are not supported.
 
 By default, the `en-US` CSL locale file shipped with citeproc-org is used for
 rendering localized dates and terms in the references, independently of the
-language settings of org documents. Additional CSL locales can be made available
+language settings of Org documents. Additional CSL locales can be made available
 by setting the value of the `citeproc-org-locales-dir` variable to a
 directory containing the locale files in question (locales can be found at
 https://github.com/citation-style-language/locales). The directory must contain
@@ -170,7 +169,7 @@ renders as
 	
 with the default style.
 
-When an org-mode document is exported to a LaTeX-based format that should not be
+When an Org-mode document is exported to a LaTeX-based format that should not be
 rendered by citeproc-org the cite link descriptions (if present) are
 rewritten to a form suitable for org-ref’s LaTeX export. The concrete form
 depends on the value of the `citeproc-org-bibtex-export-use-affixes`
@@ -217,8 +216,8 @@ line then the bibliography is omitted.
 #### Citations
 
 citeproc-org supports all citation forms implemented by the `wip-cite`
-development branch of org-mode. Short form citations contain only a single item
-id prefixed with an `@` character with or without square brackets to indicate
+development branch of Org. Short form citations contain only a single item id
+prefixed with an `@` character with or without square brackets to indicate
 parentheses, e.g.,
 
     In his magnum opus [@doe2018], Doe contradicts the earlier @doe2010.
@@ -275,11 +274,11 @@ be used at all.
 
 #### Mapping export backends to citeproc-el formatters
 
-citeproc-org uses the `org`, `html` and (optionally) `latex` citeproc-el
-output formatters to render citations and bibliographies when exporting an
-org-mode document. Since the `org` formatter has some limitations (stemming from
-the limitations of the org-mode markup) it is recommended to use the `html` and
-the `latex` formatters for HTML and LaTeX-based export backends that can handle
+citeproc-org uses the `org`, `html` and (optionally) `latex` citeproc-el output
+formatters to render citations and bibliographies when exporting an Org
+document. Since the `org` formatter has some limitations (stemming from the
+limitations of the Org-mode markup) it is recommended to use the `html` and the
+`latex` formatters for HTML and LaTeX-based export backends that can handle
 direct HTML or LaTeX output.
 
 The mapping between export backends and output formatters can be configured by
