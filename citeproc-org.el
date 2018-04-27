@@ -698,52 +698,51 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 ;;;###autoload
 (defun citeproc-org-render-references (backend)
   "Render cites and bibliography for export with BACKEND."
-  (if (not (memq backend citeproc-org-ignore-backends))
-      (let* ((parsed-buffer (org-element-parse-buffer))
-	     (mode (citeproc-org--determine-mode parsed-buffer)))
-	(when mode
-	  (-let* (((cite-ents cites-and-notes cite-count footnote-count)
-		   (citeproc-org--cites-and-notes parsed-buffer mode))
-		  ((bib-file bib-begin bib-end print-bib)
-		   (citeproc-org--get-bib-info parsed-buffer mode))
-		  (proc (citeproc-org--get-cleared-proc bib-file))
-		  (cite-info
-		   (citeproc-org--assemble-cite-info
-		    cites-and-notes cite-count footnote-count
-		    (citeproc-style-cite-note (citeproc-proc-style proc))))
-		  (citeproc-org-link-cites (and print-bib citeproc-org-link-cites))
-		  (rendered-cites
-		   (citeproc-org--append-and-render-citations
-		    cite-info proc backend mode
-		    (not (and print-bib citeproc-org-link-cites))))
-		  (rendered-bib (if print-bib (citeproc-org--bibliography proc backend) ""))
-		  (offset 0)
-		  (bib-inserted nil))
-	    (cl-loop for rendered in rendered-cites
-		     for cite-ent in cite-ents
-		     do
-		     (-let* (((begin end) (citeproc-org--element-boundaries cite-ent)))
-		       (when (and bib-end (> begin bib-end))
-			 ;; Reached a cite after the bibliography location
-			 ;; indicator so we insert the rendered bibliography
-			 ;; before it
-			 (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
-			       rendered-bib)
-			 (setq bib-inserted t)
-			 (cl-incf offset (- (length rendered-bib) (- bib-end bib-begin))))
-		       (when (and (string= "[fn::" (substring rendered 0 5))
-				  (= (char-before (+ begin offset)) ?\s))
-			 ;; Remove (a single) space before the footnote
-			 (cl-decf begin 1))
-		       (setf (buffer-substring (+ begin offset) (+ end offset))
-			     rendered)
-		       (cl-incf offset (- (length rendered) (- end begin)))))
-	    (when (and bib-end (not bib-inserted))
-	      ;; The bibliography location indicator was after all cites
-	      (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
-		    rendered-bib)))))
-    (citeproc-org--citelinks-to-legacy))
-  nil)
+  (if (memq backend citeproc-org-ignore-backends)
+      (citeproc-org--citelinks-to-legacy)
+    (let* ((parsed-buffer (org-element-parse-buffer))
+	   (mode (citeproc-org--determine-mode parsed-buffer)))
+      (when mode
+	(-let* (((cite-ents cites-and-notes cite-count footnote-count)
+		 (citeproc-org--cites-and-notes parsed-buffer mode))
+		((bib-file bib-begin bib-end print-bib)
+		 (citeproc-org--get-bib-info parsed-buffer mode))
+		(proc (citeproc-org--get-cleared-proc bib-file))
+		(cite-info
+		 (citeproc-org--assemble-cite-info
+		  cites-and-notes cite-count footnote-count
+		  (citeproc-style-cite-note (citeproc-proc-style proc))))
+		(citeproc-org-link-cites (and print-bib citeproc-org-link-cites))
+		(rendered-cites
+		 (citeproc-org--append-and-render-citations
+		  cite-info proc backend mode
+		  (not (and print-bib citeproc-org-link-cites))))
+		(rendered-bib (if print-bib (citeproc-org--bibliography proc backend) ""))
+		(offset 0)
+		(bib-inserted nil))
+	  (cl-loop for rendered in rendered-cites
+		   for cite-ent in cite-ents
+		   do
+		   (-let* (((begin end) (citeproc-org--element-boundaries cite-ent)))
+		     (when (and bib-end (> begin bib-end))
+		       ;; Reached a cite after the bibliography location
+		       ;; indicator so we insert the rendered bibliography
+		       ;; before it.
+		       (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
+			     rendered-bib)
+		       (setq bib-inserted t)
+		       (cl-incf offset (- (length rendered-bib) (- bib-end bib-begin))))
+		     (when (and (string= "[fn::" (substring rendered 0 5))
+				(= (char-before (+ begin offset)) ?\s))
+		       ;; Remove (a single) space before the footnote.
+		       (cl-decf begin 1))
+		     (setf (buffer-substring (+ begin offset) (+ end offset))
+			   rendered)
+		     (cl-incf offset (- (length rendered) (- end begin)))))
+	  (when (and bib-end (not bib-inserted))
+	    ;; The bibliography location indicator was after all cites.
+	    (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
+		  rendered-bib)))))))
 
 (provide 'citeproc-org)
 
