@@ -122,7 +122,7 @@ separate arguments."
   :group 'citeproc-org)
 
 (defcustom citeproc-org-html-hanging-indent "1.5em"
-  "The size of hanging-indent for HTML ouput in valid CSS units.
+  "The size of hanging-indent for HTML output in valid CSS units.
 Used only when hanging-indent is activated by the used CSL
 style."
   :type 'string
