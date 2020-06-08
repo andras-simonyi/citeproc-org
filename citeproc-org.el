@@ -720,7 +720,6 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 		(rendered-bib (if print-bib (citeproc-org--bibliography proc backend) ""))
 		(offset 0)
 		(bib-inserted nil))
-	  (message "GOT HERE!")
 	  (cl-loop for rendered in rendered-cites
 		   for cite-ent in cite-ents
 		   do
