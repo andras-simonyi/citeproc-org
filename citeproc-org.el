@@ -720,6 +720,7 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 		(rendered-bib (if print-bib (citeproc-org--bibliography proc backend) ""))
 		(offset 0)
 		(bib-inserted nil))
+	  (message "GOT HERE!")
 	  (cl-loop for rendered in rendered-cites
 		   for cite-ent in cite-ents
 		   do
@@ -732,7 +733,7 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 			     rendered-bib)
 		       (setq bib-inserted t)
 		       (cl-incf offset (- (length rendered-bib) (- bib-end bib-begin))))
-		     (when (and (string= "[fn::" (substring rendered 0 5))
+		     (when (and (s-starts-with-p "[fn::" rendered)
 				(= (char-before (+ begin offset)) ?\s))
 		       ;; Remove (a single) space before the footnote.
 		       (cl-decf begin 1))
