@@ -47,7 +47,7 @@ supports the syntax implemented by the `wip-cite` org-mode development branch.
 ## Installation
 
 The recommended method of installation is to download the [latest release as a
-package](https://github.com/andras-simonyi/citeproc-org/releases/download/0.2.2/citeproc-org-0.2.2.tar)
+package](https://github.com/andras-simonyi/citeproc-org/releases/download/0.2.3/citeproc-org-0.2.3.tar)
 and install it using the `package-install-file` Emacs command.
 
 ## Setup
