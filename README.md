@@ -9,9 +9,6 @@ bibliographies in Citation Style Language (CSL) styles using the
 Currently citeproc-org supports only the rendering of BibTeX
 bibliographies—biblatex support is planned.
 
-citeproc-org is in an early stage of its development and mostly untested, so 
-bugs and rough edges are to be expected.
-
 **Table of Contents**
 
 - [Requirements and dependencies](#requirements-and-dependencies)
