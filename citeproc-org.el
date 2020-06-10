@@ -673,7 +673,6 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 
 (defun citeproc-org--citelinks-to-legacy ()
   "Replace cite link contents with their legacy `org-ref' versions."
-  (interactive)
   (let ((links (org-element-map (org-element-parse-buffer) 'link
 		 (lambda (x)
 		   (when (and (member (org-element-property :type x)
