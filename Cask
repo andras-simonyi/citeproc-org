@@ -4,7 +4,7 @@
 
 (package-file "citeproc-org.el")
 
-(files "*.el" "styles" "locales" )
+(files "*.el" "chicago-author-date.csl" "locales-en-US.xml")
 
 (development
  (depends-on "org-plus-contrib"))

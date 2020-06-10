@@ -150,12 +150,12 @@ Its value is either nil or a list of the form
   "The dir from which this file was loaded.")
 
 (defconst citeproc-org--fallback-style-file
-  (f-join citeproc-org--load-dir  "styles" "chicago-author-date.csl")
+  (f-join citeproc-org--load-dir "chicago-author-date.csl")
   "Default CSL style file.")
 
 (defconst citeproc-org--fallback-locales-dir
-  (f-join citeproc-org--load-dir "locales")
-  "Directory of CSL locale files.")
+  citeproc-org--load-dir
+  "Fallback CSL locale files directory.")
 
 (defconst citeproc-org--label-alist
   '(("bk." . "book")
