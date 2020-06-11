@@ -55,7 +55,7 @@ Using citeproc-org currently requires adding its main rendering function
 citeproc](https://github.com/jkitchin/org-ref/tree/master/citeproc), which also
 uses this hook. Org-ref’s citeproc is not activated by default, but if you have
 added its renderer function, `orcp-citeproc`, to your
-`org-export-before-parsing-hook` then it has to removed before setting up
+`org-export-before-parsing-hook` then it has to be removed before setting up
 citeproc-org.
 
 citeproc-org provides the Emacs command `citeproc-org-setup` to add its
