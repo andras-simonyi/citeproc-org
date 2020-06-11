@@ -42,7 +42,6 @@
 (require 'f)
 (require 'let-alist)
 (require 'org-ref)
-
 (require 'citeproc)
 
 (defgroup citeproc-org nil
