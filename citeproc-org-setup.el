@@ -15,7 +15,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;; This file is not part of GNU Emacs.
 
@@ -32,4 +32,4 @@
   (interactive)
   (add-hook 'org-export-before-parsing-hook 'citeproc-org-render-references))
 
-;;; citeproc-org-setup ends here 
+;;; citeproc-org-setup ends here
