@@ -30,6 +30,8 @@
 (defun citeproc-org-setup ()
   "Add citeproc-org rendering to the `org-export-before-parsing-hook' hook."
   (interactive)
-  (add-hook 'org-export-before-parsing-hook 'citeproc-org-render-references))
+  (add-hook 'org-export-before-parsing-hook #'citeproc-org-render-references))
+
+(provide 'citeproc-org-setup)
 
 ;;; citeproc-org-setup ends here
