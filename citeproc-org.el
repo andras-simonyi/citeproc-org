@@ -135,7 +135,7 @@ style."
   :group 'citeproc-org)
 
 (defcustom citeproc-org-latex-hanging-indent "1.5em"
-  "The size of hanging-indent for LaTeX ouput in valid LaTeX units.
+  "The size of hanging-indent for LaTeX output in valid LaTeX units.
 Always used for LaTeX output."
   :type 'string
   :group 'citeproc-org)
@@ -482,7 +482,7 @@ the n-th cite occurring in the footnote."
       (if (eq 'footnote-reference (org-element-type elt))
 	  (progn
 	    (cl-incf footnotes-count)
-	    ;; footnotes repesented as ('footnote <label> <cite_n> ... <cite_0>)
+	    ;; footnotes represented as ('footnote <label> <cite_n> ... <cite_0>)
 	    (push (list 'footnote (org-element-property :label elt))
 		  cites-and-notes))
 	(push elt cite-elts)
