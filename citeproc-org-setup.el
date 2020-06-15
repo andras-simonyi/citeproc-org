@@ -26,6 +26,8 @@
 
 ;;; Code:
 
+(require 'citeproc-org)
+
 ;;;###autoload
 (defun citeproc-org-setup ()
   "Add citeproc-org rendering to the `org-export-before-parsing-hook' hook."
