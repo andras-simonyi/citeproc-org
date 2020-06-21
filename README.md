@@ -1,5 +1,6 @@
 # citeproc-org
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![MELPA](http://melpa.org/packages/citeproc-org-badge.svg)](http://melpa.org/#/citeproc-org)
 
 Render [Org-mode](https://orgmode.org/) citations and bibliographies during
 export in Citation Style Language (CSL) styles using the
@@ -43,9 +44,8 @@ supports the syntax implemented by the `wip-cite` org-mode development branch.
 
 ## Installation
 
-The recommended method of installation is to download the [latest release as a
-package](https://github.com/andras-simonyi/citeproc-org/releases/download/0.2.3/citeproc-org-0.2.3.tar)
-and install it using the `package-install-file` Emacs command.
+citeproc-org is available in the [MELPA package repository](https://melpa.org)
+and can be installed using Emacs’s built-in package manager, `package.el`.
 
 ## Setup
 
