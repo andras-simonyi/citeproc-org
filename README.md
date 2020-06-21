@@ -35,7 +35,7 @@ bibliographies—biblatex support is planned.
 ## Requirements and dependencies
 
 citeproc-org requires Emacs 25.1 or later compiled with libxml2 support and 
-Org-mode 9.0. Rendering [org-ref](https://github.com/jkitchin/org-ref) citation
+Org-mode 9.0 or later. Rendering [org-ref](https://github.com/jkitchin/org-ref) citation
 links requires org-ref, while rendering cites in the Org citation syntax
 requires an Org version that supports the syntax implemented by the `wip-cite`
 org-mode development branch.
