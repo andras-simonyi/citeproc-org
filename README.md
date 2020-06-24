@@ -12,7 +12,7 @@ Key features:
 - pure Emacs Lisp solution, no external dependencies;
 - extensive support for citation styles described in CSL (Citation Style
   Language), an open format used, among others, by Zotero and Pandoc;
-- support for both org-ref cite links and the (experimental/WIP) Org citation
+- support for both [org-ref](https://github.com/jkitchin/org-ref) cite links and the (experimental/WIP) Org citation
   syntax;
 - only BibTeX bibliography files are supported at the moment, but other formats,
   especially CSL and BibTeX-based ones such as Org-BibTeX and CSL-JSON are easy
