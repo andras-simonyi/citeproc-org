@@ -10,8 +10,8 @@ Lisp library.
 Key features:
 
 - pure Emacs Lisp solution, no external dependencies;
-- extensive support for citation styles described in CSL (Citation Style
-  Language), an open format used, among others, by Zotero and Pandoc;
+- extensive support for citation styles described in [CSL (Citation Style
+  Language)](https://citationstyles.org/), an open format used, among others, by [Zotero](https://www.zotero.org/) and [Pandoc](https://pandoc.org/);
 - support for both [org-ref](https://github.com/jkitchin/org-ref) cite links and the (experimental/WIP) Org citation
   syntax;
 - only BibTeX bibliography files are supported at the moment, but other formats,
