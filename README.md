@@ -3,12 +3,24 @@
 [![MELPA](http://melpa.org/packages/citeproc-org-badge.svg)](http://melpa.org/#/citeproc-org)
 
 Render [Org-mode](https://orgmode.org/) citations and bibliographies during
-export in Citation Style Language (CSL) styles using the
-[citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs Lisp library.
-(See https://citationstyles.org/ for more information on the CSL project.)
+export in [Citation Style Language (CSL)](https://citationstyles.org/) styles
+using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs
+Lisp library.
 
-Currently citeproc-org supports only the rendering of BibTeX
-bibliographies—biblatex support is planned.
+Key features:
+
+- pure Emacs Lisp solution, no external dependencies;
+- extensive support for citation styles described in CSL (Citation Style
+  Language), an open format used, among others, by Zotero and Pandoc;
+- support for both org-ref cite links and the (experimental/WIP) Org citation
+  syntax;
+- only BibTeX bibliography files are supported at the moment, but other formats,
+  especially CSL and BibTeX-based ones such as Org-BibTeX and CSL-JSON are easy
+  to add;
+- acts as a simple preprocessor for the Org exporter. In principle, this makes
+  citeproc-org compatible with any Org export backend (e.g., it works with the
+  ODT backend and ox-hugo), it can even be configured to replace BibTeX/biblatex
+  during LaTeX export.
 
 **Table of Contents**
 
