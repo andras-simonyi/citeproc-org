@@ -2,7 +2,7 @@
 [![MELPA](http://melpa.org/packages/citeproc-org-badge.svg)](http://melpa.org/#/citeproc-org)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Render [Org-mode](https://orgmode.org/) citations and bibliographies during
+Renders [Org-mode](https://orgmode.org/) citations and bibliographies during
 export in [Citation Style Language (CSL)](https://citationstyles.org/) styles
 using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs
 Lisp library.
