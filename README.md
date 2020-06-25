@@ -4,8 +4,7 @@
 
 Renders [Org mode](https://orgmode.org/) citations and bibliographies during
 export in [Citation Style Language (CSL)](https://citationstyles.org/) styles
-using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs
-Lisp library.
+using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) library.
 
 **Key features**
 
