@@ -7,7 +7,7 @@ export in [Citation Style Language (CSL)](https://citationstyles.org/) styles
 using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) Emacs
 Lisp library.
 
-Key features:
+**Key features**
 
 - pure Emacs Lisp solution, no external dependencies;
 - extensive support for citation styles described in [CSL (Citation Style
