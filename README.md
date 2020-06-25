@@ -19,7 +19,7 @@ Key features:
   to add;
 - acts as a simple preprocessor for the Org exporter. In principle, this makes
   citeproc-org compatible with any Org export backend (e.g., it works with the
-  ODT backend and ox-hugo), it can even be configured to replace BibTeX/biblatex
+  ODT backend and org-to-blog exporters like [ox-hugo](https://ox-hugo.scripter.co/)), it can even be configured to replace BibTeX/biblatex
   during LaTeX export.
 
 **Table of Contents**
