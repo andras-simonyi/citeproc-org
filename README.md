@@ -17,8 +17,8 @@ using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) library.
   especially CSL and BibTeX-based ones such as Org-BibTeX and CSL-JSON are easy
   to add;
 - acts as a simple preprocessor for the Org exporter. In principle, this makes
-  citeproc-org compatible with any Org export backend (e.g., it works with the
-  ODT backend and org-to-blog exporters like [ox-hugo](https://ox-hugo.scripter.co/)), it can even be configured to replace BibTeX/biblatex
+  citeproc-org compatible with any Org export backend (e.g., it works with the built-in
+  HTML and ODT backends, and org-to-blog exporters like [ox-hugo](https://ox-hugo.scripter.co/)), it can even be configured to replace BibTeX/biblatex
   during LaTeX export.
 
 **Table of Contents**
