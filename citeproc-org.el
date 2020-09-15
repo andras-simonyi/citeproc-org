@@ -246,15 +246,17 @@ The returned value is
 
 (defun citeproc-org--get-option-val (opt)
   "Return the value of org mode option OPT."
-  (goto-char (point-min))
-  (if (re-search-forward
-       (concat "^#\\+" opt ":\\(.+\\)$")
-       nil t)
-      (let* ((match (match-data))
-	     (start (elt match 2))
-	     (end (elt match 3)))
-	(s-trim (buffer-substring-no-properties start end)))
-    nil))
+  (save-restriction
+    (widen)
+    (goto-char (point-min))
+    (if (re-search-forward
+	 (concat "^#\\+" opt ":\\(.+\\)$")
+	 nil t)
+	(let* ((match (match-data))
+	       (start (elt match 2))
+	       (end (elt match 3)))
+	  (s-trim (buffer-substring-no-properties start end)))
+      nil)))
 
 ;;; Org-ref and org citation parsers
 
