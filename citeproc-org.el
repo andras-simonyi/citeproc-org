@@ -244,13 +244,15 @@ The returned value is
       (setq curr (org-element-property :parent curr)))
     result))
 
-(defun citeproc-org--get-option-val (opt)
-  "Return the value of org mode option OPT."
+(defun citeproc-org--get-option-val (opt &optional link)
+  "Return the value of org mode option OPT.
+If optional LINK is non-nil then look for the option in link
+format, i.e., don't require the leading `#+' characters."
   (save-restriction
     (widen)
     (goto-char (point-min))
     (if (re-search-forward
-	 (concat "^#\\+" opt ":\\(.+\\)$")
+	 (concat (if link "^" "^#\\+") opt ":\\(.+\\)$")
 	 nil t)
 	(let* ((match (match-data))
 	       (start (elt match 2))
@@ -626,10 +628,13 @@ Returns a (BIB-FILE BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
       (setq bib-elt-begin (point-max)
 	    bib-elt-end (point-max)))
     (unless bib-file
-      (if (and (boundp 'org-ref-default-bibliography)
-	       org-ref-default-bibliography)
-	  (setq bib-file (car org-ref-default-bibliography))
-	(error "No bibliography file was specified")))
+      (-if-let (wide-bib-file (and (buffer-narrowed-p)
+				   (citeproc-org--get-option-val "bibliography" t)))
+	  (setq bib-file wide-bib-file) ; Bib link was found in widened buffer
+	(if (and (boundp 'org-ref-default-bibliography)
+		 org-ref-default-bibliography)
+	    (setq bib-file (car org-ref-default-bibliography))
+	  (error "No bibliography file was specified"))))
     (list bib-file bib-elt-begin bib-elt-end print-bib)))
 
 (defun citeproc-org--get-keyword-bib-info (parsed-buffer)
