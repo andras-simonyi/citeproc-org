@@ -1,6 +1,6 @@
 ;;; citeproc-org.el --- Render org-mode references in CSL styles -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018 András Simonyi
+;; Copyright (C) 2018-2021 András Simonyi
 
 ;; Author: András Simonyi <andras.simonyi@gmail.com>
 ;; Maintainer: András Simonyi <andras.simonyi@gmail.com>
@@ -143,7 +143,7 @@ Always used for LaTeX output."
 (defvar citeproc-org--proc-cache nil
   "Cached citeproc processor for citeproc-org.
 Its value is either nil or a list of the form
-\(PROC STYLE-FILE BIBTEX-FILE LOCALE).")
+\(PROC STYLE-FILE BIB-FILES LOCALE TIME-STAMP).")
 
 (defconst citeproc-org--load-dir (f-dirname load-file-name)
   "The dir from which this file was loaded.")
@@ -384,8 +384,8 @@ is not in a footnote."
 
 ;;; Cite syntax independent code
 
-(defun citeproc-org--get-cleared-proc (bibtex-file)
-  "Return a cleared citeproc processor reading items from BIBTEX-FILE.
+(defun citeproc-org--get-cleared-proc (files)
+  "Return a cleared citeproc processor reading items from FILES.
 Clear and return the buffer's cached processor if it is available
 and had the same parameters. Create and return a new processor
 otherwise."
@@ -394,26 +394,30 @@ otherwise."
 			citeproc-org--fallback-style-file))
 	(locale (or (citeproc-org--get-option-val "language") "en"))
 	result)
-    (-when-let ((c-proc c-style-file c-bibtex-file c-locale)
+    (-when-let ((c-proc c-style-file c-files c-locale c-time)
 		citeproc-org--proc-cache)
       (when (and (string= style-file c-style-file)
 		 (string= locale c-locale))
-	(unless (string= bibtex-file c-bibtex-file)
+	(unless (and (equal files c-files)
+		     (--none-p (time-less-p c-time
+				(file-attribute-modification-time
+				 (file-attributes it)))
+			       c-files))
 	  (setf (citeproc-proc-getter c-proc)
-		(citeproc-itemgetter-from-bibtex bibtex-file)
-		(elt citeproc-org--proc-cache 1) bibtex-file))
+		(citeproc-hash-itemgetter-from-any files)
+		(elt citeproc-org--proc-cache 2) files))
 	(citeproc-clear c-proc)
 	(setq result c-proc)))
     (or result
 	(let ((proc (citeproc-create
 		     style-file
-		     (citeproc-itemgetter-from-bibtex bibtex-file)
+		     (citeproc-hash-itemgetter-from-any files)
 		     (citeproc-locale-getter-from-dir
 		      (or citeproc-org-locales-dir
 			  citeproc-org--fallback-locales-dir))
 		     locale)))
 	  (setq citeproc-org--proc-cache
-		(list proc style-file bibtex-file locale))
+		(list proc style-file files locale (current-time)))
 	  proc))))
 
 (defun citeproc-org--format-html-bib (bib parameters)
@@ -633,7 +637,7 @@ Returns a (BIB-FILE BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 	  (setq bib-file wide-bib-file) ; Bib link was found in widened buffer
 	(if (and (boundp 'org-ref-default-bibliography)
 		 org-ref-default-bibliography)
-	    (setq bib-file (car org-ref-default-bibliography))
+	    (setq bib-file org-ref-default-bibliography)
 	  (error "No bibliography file was specified"))))
     (list bib-file bib-elt-begin bib-elt-end print-bib)))
 
@@ -712,7 +716,7 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 		 (citeproc-org--cites-and-notes parsed-buffer mode))
 		((bib-file bib-begin bib-end print-bib)
 		 (citeproc-org--get-bib-info parsed-buffer mode))
-		(proc (citeproc-org--get-cleared-proc bib-file))
+		(proc (citeproc-org--get-cleared-proc (split-string bib-file "," t)))
 		(cite-info
 		 (citeproc-org--assemble-cite-info
 		  cites-and-notes cite-count footnote-count
