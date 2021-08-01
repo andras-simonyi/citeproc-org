@@ -2,24 +2,21 @@
 [![MELPA](http://melpa.org/packages/citeproc-org-badge.svg)](http://melpa.org/#/citeproc-org)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Renders [Org mode](https://orgmode.org/) citations and bibliographies during
+Renders [org-ref](https://github.com/jkitchin/org-ref) citations and bibliographies during
 export in [Citation Style Language (CSL)](https://citationstyles.org/) styles
 using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) library.
 
 **Key features**
 
 - pure Emacs Lisp solution, no external dependencies;
-- extensive support for citation styles described in [CSL (Citation Style
-  Language)](https://citationstyles.org/), an open format used, among others, by [Zotero](https://www.zotero.org/) and [Pandoc](https://pandoc.org/);
-- support for both [org-ref](https://github.com/jkitchin/org-ref) cite links and the (experimental/WIP) Org citation
-  syntax;
-- only BibTeX bibliography files are supported at the moment, but other formats,
-  especially CSL and BibTeX-based ones such as Org-BibTeX and CSL-JSON are easy
-  to add;
+- extensive support for citation styles described in [CSL (Citation Style Language)](https://citationstyles.org/), an open format used, among others, by [Zotero](https://www.zotero.org/) and [Pandoc](https://pandoc.org/);
+- support for [org-ref](https://github.com/jkitchin/org-ref) cite links;
+- a large number of supported bibliography formats: CSL-JSON, BibTeX, biblatex and Org-BibTeX/biblatex;
 - acts as a simple preprocessor for the Org exporter. In principle, this makes
-  citeproc-org compatible with any Org export backend (e.g., it works with the built-in
-  HTML and ODT backends, and org-to-blog exporters like [ox-hugo](https://ox-hugo.scripter.co/)), it can even be configured to replace BibTeX/biblatex
-  during LaTeX export.
+  citeproc-org compatible with any Org export backend (e.g., it works with the
+  built-in HTML and ODT backends, and org-to-blog exporters like
+  [ox-hugo](https://ox-hugo.scripter.co/)), it can even be configured to replace
+  BibTeX/biblatex during LaTeX export.
 
 **Table of Contents**
 
@@ -31,11 +28,7 @@ using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) library.
     - [CSL locales](#csl-locales)
 	- [Org-ref citations](#org-ref-citations)
         - [Locators and pre/post texts in cite links](#locators-and-prepost-texts-in-cite-links)
-        - [Suppressing affixes and author names in citations](#suppressing-affixes-and-author-names-in-citations)
-    - [Org-mode citations and bibliography using the “wip-cite” syntax](#org-mode-citations-and-bibliography-using-the-wip-cite-syntax)
-	    - [Bibliography file and placement](#bibliography-file-and-placement)
- 		- [Citations](#citations)
-        - [Locators](#locators)
+        - [Citation modes and variants](#citation-modes-and-variants)
     - [Output format configuration](#output-format-configuration)
         - [Ignored export backends](#ignored-export-backends)
         - [Mapping export backends to citeproc-el formatters](#mapping-export-backends-to-citeproc-el-formatters)
@@ -82,13 +75,6 @@ basis then add the following line to your `.emacs` or `init.el` file:
 ```
 
 ## Usage
-
-citeproc-org supports two different Org citation syntaxes:
-[org-ref](https://github.com/jkitchin/org-ref) citation links and,
-experimentally, the citation syntax used by the `wip-cite` development branch of
-org-mode. During the export process citeproc-org detects which type of citations
-are present in the document and automatically uses the corresponding citation
-parser. The two citation styles cannot be mixed.
 
 In its basic use, citeproc-org overtakes citation rendering for non-LaTeX
 Org-mode export backends and exported org-mode citations are rendered in the
@@ -189,78 +175,71 @@ non-nil works well with Natbib styles but causes errors when using the built-in
 LaTeX bibliography styles because their `\cite` command doesn’t accept a
 separate argument for post text.
 
-#### Suppressing affixes and author names in citations
+#### Citation modes and variants
 
 In certain contexts it might be desirable to suppress the affixes (typically
-brackets) around citations and/or the name(s) of the author(s). With org-ref and
-citeproc-org these effects can be achieved by using a suitable cite link type.
+brackets) around citations, print all author names or use a so-called
+textual citation etc. With org-ref and citeproc-org these effects can be achieved
+by using a suitable cite link type.
 
 The variables `citeproc-org-suppress-affixes-cite-link-types` (defaults to
-`("citealt")`) and `citeproc-org-suppress-author-cite-link-types` (defaults
-to `("citeyear")`) contain the lists of link types that suppress citation
-affixes and/or author names.
+`("citealt")`) and `citeproc-org-print-all-names-cite-link-types` (defaults to
+`("citet*" "citetext*" "citeauthor*")`) contain the lists of link types that
+should suppress citation affixes and/or print all author names, while the
+variable `citeproc-org-cite-link-mode-alist` contains a mapping between link
+types and `citeproc-el` citation modes, the default value is
 
-### Org-mode citations and bibliography using the “wip-cite” syntax
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-Currently only the the `wip-cite` development branch of Org supports this
-citaton syntax.
 
-#### Bibliography file and placement
+<colgroup>
+<col  class="org-left" />
 
-The path of the BibTeX file to be used has to be specified by a
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">link type</th>
+<th scope="col" class="org-left">citation mode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">citet</td>
+<td class="org-left">textual</td>
+</tr>
 
-	#+BIBLIOGRAPHY: /path/to/bibtex_file
+<tr>
+<td class="org-left">citet*</td>
+<td class="org-left">textual</td>
+</tr>
 
-line, while the location where the rendered bibliography should be placed can be
-indicated by a
+<tr>
+<td class="org-left">citetext</td>
+<td class="org-left">textual</td>
+</tr>
 
-	#+BIBLIOGRAPHY: here
-	
-line in the document. If the document does not contain a `#+BIBLIOGRAPHY: here`
-line then the bibliography is omitted.
+<tr>
+<td class="org-left">citetext*</td>
+<td class="org-left">textual</td>
+</tr>
 
-#### Citations
+<tr>
+<td class="org-left">citeyear</td>
+<td class="org-left">year-only</td>
+</tr>
 
-citeproc-org supports all citation forms implemented by the `wip-cite`
-development branch of Org. Short form citations contain only a single item id
-prefixed with an `@` character with or without square brackets to indicate
-parentheses, e.g.,
+<tr>
+<td class="org-left">citeauthor</td>
+<td class="org-left">author-only</td>
+</tr>
 
-    In his magnum opus [@doe2018], Doe contradicts the earlier @doe2010.
-
-which would be rendered as
-
-	In his magnum opus (Doe 2018), Doe contradicts the earlier Doe 2010.
-
-in the default style.
-
-Long form citations, in contrast, have a far more elaborate syntax, which
-supports multiple cites and pre/post texts:
-
-	[cite:common_pre_text;pre_text1 @itemid1 post_text1;...;pre_text_n @itemid_n post_text_n;common_post_text]
-	
-(using pre/post texts and multiple cites is, of course, optional). There is a
-parenthetical variant as well:
-	
-	[(cite):common_pre_text;pre_text1 @itemid1 post_text1;...;pre_text_n @itemid_n post_text_n;common_post_text]
-	
-#### Locators
-	
-Similarly to org-ref cites, citeproc-org uses post-texts to represent cite
-locators. More concretely, the post-text field of cites can have the form
-`locator, suffix`, where the locator starts with a recognized locator term
-such as “p.” and "chap.” (see section [Locators and pre/post texts in cite
-links](#locators-and-prepost-texts-in-cite-links), above, for the full list),
-and ends before the first comma or at the end of the whole post-text field if
-there is no comma. For example, the citation
-
-	[(cite):see @Doe2018 p. 123, for further references]
-	
-would be rendered as
-
-	(see Doe 2018, 123 for further references)
-	
-in the default style.
+<tr>
+<td class="org-left">citeauthor*</td>
+<td class="org-left">author-only</td>
+</tr>
+</tbody>
+</table>
 
 ### Output format configuration
 
@@ -305,7 +284,7 @@ from John Kitchin’s [org-ref citation processor](https://github.com/jkitchin/o
 
 ## License
 
-Copyright (C) 2018 András Simonyi
+Copyright (C) 2018-2021 András Simonyi
 
 Authors: András Simonyi
 
