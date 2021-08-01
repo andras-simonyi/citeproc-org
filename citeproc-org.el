@@ -79,13 +79,13 @@ If nil then only the fallback en-US locale will be available."
 
 (defcustom citeproc-org-suppress-affixes-cite-link-types '("citealt")
   "Suppress citation affixes for these cite link types."
-  :type '(repeat :tag "List of citation link types" string)
+  :type '(repeat string)
   :group 'citeproc-org)
 
 (defcustom citeproc-org-print-all-names-cite-link-types
   '("citet*" "citetext*" "citeauthor*")
   "Print all names for these cite link types."
-  :type '(repeat :tag "List of citation link types" string)
+  :type '(repeat string)
   :group 'citeproc-org)
 
 (defcustom citeproc-org-cite-link-mode-alist
@@ -360,45 +360,6 @@ is not in a footnote."
      :ignore-et-al (member type
 			   citeproc-org-print-all-names-cite-link-types))))
 
-;; TODO: Deal with the common prefix and suffix
-;; NOTE: There is no way to express author suppression in the present org
-;; citation syntax
-(defun citeproc-org--parse-org-cite (cite footnote-no new-fn
-					  &optional capitalize-outside-fn)
-  "Return a citeproc citation corresponding to an org CITE.
-FOOTNOTE-NO is nil if LINK is not in a footnote or the number of
-the link's footnote. If NEW-FN is non-nil the the link was not in
-a footnote. If CAPITALIZE-OUTSIDE-FN is non-nil then set the
-`capitalize-first' slot of the citation struct to t when the link
-is not in a footnote."
-  (citeproc-citation-create
-   :note-index footnote-no
-   :cites
-   (let ((refs (org-element-contents cite)))
-     (mapcar
-      (lambda (ref)
-	(let* ((ref-prefix (--when-let (car (org-element-property :prefix ref))
-			     (substring-no-properties (org-element-interpret-data it))))
-	       (id (org-element-property :key ref))
-	       (parsed-suffix
-		(--when-let (car (org-element-property :suffix ref))
-		  (citeproc-org--parse-locator-affix
-		   (substring-no-properties (org-element-interpret-data it)))))
-	       (prefix-in-parsed-suffix (alist-get 'prefix parsed-suffix))
-	       (location (alist-get 'location parsed-suffix)))
-	  (setf (alist-get 'prefix parsed-suffix)
-		(if (and location
-			 (not (s-blank-str-p prefix-in-parsed-suffix)))
-		    (concat ref-prefix prefix-in-parsed-suffix)
-		  ref-prefix))
-	  (unless location (setf (alist-get 'suffix parsed-suffix)
-				 prefix-in-parsed-suffix))
-	  (cons (cons 'id id) parsed-suffix)))
-      refs))
-   :capitalize-first (and capitalize-outside-fn
-			  new-fn)
-   :suppress-affixes (not (org-element-property :parenthetical cite))))
-
 ;;; Cite syntax independent code
 
 (defun citeproc-org--get-cleared-proc (files)
@@ -485,19 +446,19 @@ otherwise."
 			     (not citeproc-org-link-cites))))
 		   "\n"))))
 
-(defun citeproc-org--cites-and-notes (parsed-buffer mode)
-  "Collect cite elements and info from PARSED-BUFFER in MODE.
+(defun citeproc-org--cites-and-notes (parsed-buffer)
+  "Collect cite elements and info from PARSED-BUFFER.
 PARSED-BUFFER is a buffer parse produced by
-`org-element-parse-buffer', MODE is either `link' or `citation'.
-Returns a list (CITES CITES-AND-NOTES CITE-COUNT FOOTNOTES-COUNT)
-where CITES-AND-NOTES is the list of cite and footnote
-representations (lists of the form (`cite' CITE-IDX CITE)
-or (`footnote' FN-LABEL [CITE_n ... CITE_0])), in which CITE_n is
-the n-th cite occurring in the footnote."
-  (let* ((elt-types (list 'footnote-reference mode))
+`org-element-parse-buffer'.. Returns a list (CITES
+CITES-AND-NOTES CITE-COUNT FOOTNOTES-COUNT) where CITES-AND-NOTES
+is the list of cite and footnote representations (lists of the
+form (`cite' CITE-IDX CITE) or (`footnote' FN-LABEL [CITE_n ...
+CITE_0])), in which CITE_n is the n-th cite occurring in the
+footnote."
+  (let* ((elt-types '(footnote-reference link))
 	 (elts (org-element-map parsed-buffer elt-types
 		 (lambda (x)
-		   (when (or (memq (org-element-type x) '(footnote-reference citation))
+		   (when (or (eq (org-element-type x) 'citation)
 			     (member (org-element-property :type x) org-ref-cite-types))
 		     x))))
 	 cite-elts cites-and-notes
@@ -572,20 +533,17 @@ treat all links as footnotes (used for note CSL styles)."
 		 cite-info)))))
     cite-info))
 
-(defun citeproc-org--append-and-render-citations (cite-info proc backend mode
+(defun citeproc-org--append-and-render-citations (cite-info proc backend
 							    &optional no-links)
-  "Render citations using CITE-INFO and PROC for BACKEND in MODE.
+  "Render citations using CITE-INFO and PROC for BACKEND.
 If optional NO-LINKS is given then don't link citations to bib
 items. Return the list of corresponding rendered citations."
   (let* ((is-note-style (citeproc-style-cite-note (citeproc-proc-style proc)))
-	 (parser-fun (pcase mode
-		       ('link #'citeproc-org--parse-orgref-link)
-		       ('citation #'citeproc-org--parse-org-cite)))
-	 (citations (--map (funcall parser-fun
-				    (plist-get it :elt)
-				    (plist-get it :fn-no)
-				    (plist-get it :new-fn)
-				    is-note-style)
+	 (citations (--map (citeproc-org--parse-orgref-link
+			    (plist-get it :elt)
+			    (plist-get it :fn-no)
+			    (plist-get it :new-fn)
+			    is-note-style)
 			   cite-info)))
     (citeproc-append-citations citations proc)
     (let* ((rendered
@@ -609,18 +567,6 @@ items. Return the list of corresponding rendered citations."
   "Put RENDERED-CITATIONS into insertion order using CITE-INFO."
   (let ((sorted (cl-sort  cite-info #'< :key (lambda (x) (plist-get x :elt-no)))))
     (--map (elt rendered-citations (plist-get it :cite-no)) sorted)))
-
-(defun citeproc-org--determine-mode (parsed-buffer)
-  "Determine the type of citation entities used in PARSED-BUFFER.
-Return `link' `citation' or nil if there are no citations."
-  (org-element-map parsed-buffer '(link citation)
-    (lambda (x)
-      (cond ((eq (org-element-type x) 'citation) 'citation)
-	    ((member (org-element-property :type x)
-		     org-ref-cite-types)
-	     'link)
-	    (t nil)))
-    nil t))
 
 (defun citeproc-org--get-link-bib-info (parsed-buffer)
   "Return link-based bibliography information from PARSED-BUFFER.
@@ -658,34 +604,6 @@ Returns a (BIB-FILE BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
 	    (setq bib-file org-ref-default-bibliography)
 	  (error "No bibliography file was specified"))))
     (list bib-file bib-elt-begin bib-elt-end print-bib)))
-
-(defun citeproc-org--get-keyword-bib-info (parsed-buffer)
-  "Return keyword-based bibliography information from PARSED-BUFFER.
-Returns a (BIB-FILE BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
-  (-if-let (bib-file (citeproc-org--get-option-val "bibliography"))
-      (let ((bib-place
-	     (org-element-map parsed-buffer 'keyword
-	       (lambda (x)
-		 (when (and (eq 'keyword (org-element-type x))
-			    (string= (org-element-property :key x)
-				     "BIBLIOGRAPHY")
-			    (string= (org-element-property :value x)
-				     "here"))
-		   x))
-	       nil t)))
-	`(,bib-file
-	  ,@(if bib-place (citeproc-org--element-boundaries bib-place)
-	      (list nil nil))
-	  ,(not (not bib-place))))
-    (error "No bibliography file was specified")))
-
-(defun citeproc-org--get-bib-info (parsed-buffer mode)
-  "Return bibliography information from PARSED-BUFFER for MODE.
-MODE is either `link' or `citation'. Returns a (BIB-FILE
-BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
-  (pcase mode
-    ('link (citeproc-org--get-link-bib-info parsed-buffer))
-    ('citation (citeproc-org--get-keyword-bib-info parsed-buffer))))
 
 (defun citeproc-org--citelink-content-to-legacy (content)
   "Convert a parsed citelink CONTENT to a legacy one."
@@ -727,49 +645,47 @@ BIB-ELT-BEGIN BIB-ELT-END PRINT-BIB) list."
   "Render cites and bibliography for export with BACKEND."
   (if (memq backend citeproc-org-ignore-backends)
       (citeproc-org--citelinks-to-legacy)
-    (let* ((parsed-buffer (org-element-parse-buffer))
-	   (mode (citeproc-org--determine-mode parsed-buffer)))
-      (when mode
-	(-let* (((cite-ents cites-and-notes cite-count footnote-count)
-		 (citeproc-org--cites-and-notes parsed-buffer mode))
-		((bib-file bib-begin bib-end print-bib)
-		 (citeproc-org--get-bib-info parsed-buffer mode))
-		(proc (citeproc-org--get-cleared-proc (split-string bib-file "," t)))
-		(cite-info
-		 (citeproc-org--assemble-cite-info
-		  cites-and-notes cite-count footnote-count
-		  (citeproc-style-cite-note (citeproc-proc-style proc))))
-		(citeproc-org-link-cites (and print-bib citeproc-org-link-cites))
-		(rendered-cites
-		 (citeproc-org--append-and-render-citations
-		  cite-info proc backend mode
-		  (not (and print-bib citeproc-org-link-cites))))
-		(rendered-bib (if print-bib (citeproc-org--bibliography proc backend) ""))
-		(offset 0)
-		(bib-inserted nil))
-	  (cl-loop for rendered in rendered-cites
-		   for cite-ent in cite-ents
-		   do
-		   (-let* (((begin end) (citeproc-org--element-boundaries cite-ent)))
-		     (when (and bib-end (> begin bib-end))
-		       ;; Reached a cite after the bibliography location
-		       ;; indicator so we insert the rendered bibliography
-		       ;; before it.
-		       (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
-			     rendered-bib)
-		       (setq bib-inserted t)
-		       (cl-incf offset (- (length rendered-bib) (- bib-end bib-begin))))
-		     (when (and (s-starts-with-p "[fn::" rendered)
-				(= (char-before (+ begin offset)) ?\s))
-		       ;; Remove (a single) space before the footnote.
-		       (cl-decf begin 1))
-		     (setf (buffer-substring (+ begin offset) (+ end offset))
-			   rendered)
-		     (cl-incf offset (- (length rendered) (- end begin)))))
-	  (when (and bib-end (not bib-inserted))
-	    ;; The bibliography location indicator was after all cites.
-	    (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
-		  rendered-bib)))))))
+    (let* ((parsed-buffer (org-element-parse-buffer)))
+      (-let* (((cite-ents cites-and-notes cite-count footnote-count)
+	       (citeproc-org--cites-and-notes parsed-buffer))
+	      ((bib-file bib-begin bib-end print-bib)
+	       (citeproc-org--get-link-bib-info parsed-buffer))
+	      (proc (citeproc-org--get-cleared-proc (split-string bib-file "," t)))
+	      (cite-info
+	       (citeproc-org--assemble-cite-info
+		cites-and-notes cite-count footnote-count
+		(citeproc-style-cite-note (citeproc-proc-style proc))))
+	      (citeproc-org-link-cites (and print-bib citeproc-org-link-cites))
+	      (rendered-cites
+	       (citeproc-org--append-and-render-citations
+		cite-info proc backend
+		(not (and print-bib citeproc-org-link-cites))))
+	      (rendered-bib (if print-bib (citeproc-org--bibliography proc backend) ""))
+	      (offset 0)
+	      (bib-inserted nil))
+	(cl-loop for rendered in rendered-cites
+		 for cite-ent in cite-ents
+		 do
+		 (-let* (((begin end) (citeproc-org--element-boundaries cite-ent)))
+		   (when (and bib-end (> begin bib-end))
+		     ;; Reached a cite after the bibliography location
+		     ;; indicator so we insert the rendered bibliography
+		     ;; before it.
+		     (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
+			   rendered-bib)
+		     (setq bib-inserted t)
+		     (cl-incf offset (- (length rendered-bib) (- bib-end bib-begin))))
+		   (when (and (s-starts-with-p "[fn::" rendered)
+			      (= (char-before (+ begin offset)) ?\s))
+		     ;; Remove (a single) space before the footnote.
+		     (cl-decf begin 1))
+		   (setf (buffer-substring (+ begin offset) (+ end offset))
+			 rendered)
+		   (cl-incf offset (- (length rendered) (- end begin)))))
+	(when (and bib-end (not bib-inserted))
+	  ;; The bibliography location indicator was after all cites.
+	  (setf (buffer-substring (+ bib-begin offset) (+ bib-end offset))
+		rendered-bib))))))
 
 (provide 'citeproc-org)
 
