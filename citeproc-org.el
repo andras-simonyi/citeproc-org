@@ -82,9 +82,25 @@ If nil then only the fallback en-US locale will be available."
   :type '(repeat :tag "List of citation link types" string)
   :group 'citeproc-org)
 
-(defcustom citeproc-org-suppress-author-cite-link-types '("citeyear")
-  "Suppress author for these cite link types."
+(defcustom citeproc-org-print-all-names-cite-link-types
+  '("citet*" "citetext*" "citeauthor*")
+  "Print all names for these cite link types."
   :type '(repeat :tag "List of citation link types" string)
+  :group 'citeproc-org)
+
+(defcustom citeproc-org-cite-link-mode-alist
+  '(("citet" . textual)
+    ("citet*" . textual)
+    ("citetext" . textual)
+    ("citetext*" . textual)
+    ("citeyear" . year-only)
+    ("citeauthor" . author-only)
+    ("citeauthor*" . author-only))
+  "Alist mapping cite link types to citeproc-el citation modes as symbols.
+Supported modes are `textual', `year-only', `author-only' and
+`suppress-author'. If a link type is not among the keys here then
+the default citation mode is used."
+  :type '(alist :key-type string :value-type symbol)
   :group 'citeproc-org)
 
 (defcustom citeproc-org-link-cites t
@@ -335,13 +351,14 @@ is not in a footnote."
 					    cites-rest)))
 		  (-zip cites-ids cites-rest-filled))
 	      (mapcar #'list cites-ids))))
-       (if (member type citeproc-org-suppress-author-cite-link-types)
-	   (cons (cons '(suppress-author . t) (car cites)) (cdr cites))
-	 cites))
+       cites)
+     :mode (assoc-default type citeproc-org-cite-link-mode-alist)
      :capitalize-first (and capitalize-outside-fn
 			    new-fn)
      :suppress-affixes (member type
-			       citeproc-org-suppress-affixes-cite-link-types))))
+			       citeproc-org-suppress-affixes-cite-link-types)
+     :ignore-et-al (member type
+			   citeproc-org-print-all-names-cite-link-types))))
 
 ;; TODO: Deal with the common prefix and suffix
 ;; NOTE: There is no way to express author suppression in the present org
