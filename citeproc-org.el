@@ -400,12 +400,13 @@ otherwise."
 		 (string= locale c-locale))
 	(unless (and (equal files c-files)
 		     (--none-p (time-less-p c-time
-				(file-attribute-modification-time
-				 (file-attributes it)))
-			       c-files))
+					    (file-attribute-modification-time
+					     (file-attributes it)))
+			       files))
 	  (setf (citeproc-proc-getter c-proc)
 		(citeproc-hash-itemgetter-from-any files)
-		(elt citeproc-org--proc-cache 2) files))
+		(elt citeproc-org--proc-cache 2) files
+		(elt citeproc-org--proc-cache 4) (current-time)))
 	(citeproc-clear c-proc)
 	(setq result c-proc)))
     (or result
