@@ -6,6 +6,23 @@ Renders [Org mode](https://orgmode.org/) citations and bibliographies during
 export in [Citation Style Language (CSL)](https://citationstyles.org/) styles
 using the [citeproc-el](https://github.com/andras-simonyi/citeproc-el) library.
 
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **!! Important note, read this first (last updated on 2021-12-18) !!**  ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) 
+
+As native support for citations including CSL-based export is now part of Org
+(see [the
+announcement](https://orgmode.org/list/87o8bcnfk9.fsf@nicolasgoaziou.fr/) and
+the relevant [manual
+section](https://orgmode.org/manual/Citation-handling.html)), and the most recent
+org-ref version also supports CSL-formatting (see [this
+video](https://www.youtube.com/watch?v=Xs59PGTfDC0)), citeproc-org is obsolete
+and will be in maintenance mode (reported bugs will be fixed), with only
+occasional backports from the Org-native CSL infrastructure, which is under
+active development.The recommended way of getting CSL-rendering of Org citations
+is therefore using native Org cites with the CSL export processor or using
+[org-ref 3](https://github.com/jkitchin/org-ref).
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **!! End of note !!**  ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) 
+
 **Key features**
 
 - pure Emacs Lisp solution, no external dependencies;
