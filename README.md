@@ -17,7 +17,7 @@ org-ref version also supports CSL-formatting (see [this
 video](https://www.youtube.com/watch?v=Xs59PGTfDC0)), citeproc-org is obsolete
 and will be in maintenance mode (reported bugs will be fixed), with only
 occasional backports from the Org-native CSL infrastructure, which is under
-active development.The recommended way of getting CSL-rendering of Org citations
+active development. The recommended way of getting CSL-rendering of Org citations
 is therefore using native Org cites with the CSL export processor or using
 [org-ref 3](https://github.com/jkitchin/org-ref).
 
